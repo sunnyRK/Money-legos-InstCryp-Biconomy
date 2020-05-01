@@ -94,8 +94,9 @@ export async function biconomyLogin(web3, contractInstance, biconomyAddress) {
 }
 
 export async function addTransaction(web3, contractInstance, biconomyAddress, tokenSymbol, to, value, hash) {
+    let transactionHash;
     try{
-        alert("ADDDD")
+        alert("Transfer Successfull. Now Adding Transaction to transaction history!");
         const accounts = await web3.eth.getAccounts();
         await contractInstance.methods.addTransaction(
             biconomyAddress,
@@ -106,21 +107,24 @@ export async function addTransaction(web3, contractInstance, biconomyAddress, to
         ).send({
             from:accounts[0]
         }).on("transactionHash", (hash) => {
+            transactionHash = hash
             // alert("Transaction hash: " +  hash);
         }).once("confirmation", (confirmationCount, receipt) => {
             // alert("Transaction confirmed!")
         }).on("error", (error) => {
             console.log("error");
-            console.log(error);
+            console.log(error.message);
         });
     }catch(err){
         console.log(err);
+        return;
     }
+    return transactionHash;
 }
 
 
 export async function transferErc20(web3, contractInstance, to, value) {
-    let transactionHash;
+    let status;
     try{
         const accounts = await web3.eth.getAccounts();
         await contractInstance.methods.transfer(
@@ -129,10 +133,11 @@ export async function transferErc20(web3, contractInstance, to, value) {
         ).send({
             from:accounts[0]
         }).on("transactionHash", (hash) => {
-            transactionHash = hash;
             // alert("Transaction hash: " +  hash);
         }).once("confirmation", (confirmationCount, receipt) => {   
             // alert("Transaction confirmed!")
+            console.log(receipt.status);
+            status = receipt.status
         }).on("error", (error)=>{
             console.log(error);
         });
@@ -140,6 +145,6 @@ export async function transferErc20(web3, contractInstance, to, value) {
         console.log(err);
         return;
     }
-    return transactionHash;
+    return status;
 }
 

@@ -87,10 +87,16 @@ class Index extends Component {
                 var collateralTokenSymbol = this.state.collateralTokenSymbol;
                 var collateralValue = this.state.collateralValue;
                 const _inst = await getERCContractInstance(realweb3, collateralTokenSymbol);
-                await  transferErc20(realweb3, _inst, biconomyAddress, collateralValue); //transfer collateral for meta transaction
-                toast.success("You have deposited Crypto for meta transaction !", {
-                    position: toast.POSITION.TOP_RIGHT
-                });
+                const status = await  transferErc20(realweb3, _inst, biconomyAddress, collateralValue); //transfer collateral for meta transaction
+                if(status) {
+                    toast.success("You have deposited Crypto for meta transaction !", {
+                        position: toast.POSITION.TOP_RIGHT
+                    });
+                } else {
+                    toast.error("Transaction Failed!!", {
+                        position: toast.POSITION.TOP_RIGHT
+                    }); 
+                }
             } else {
                 toast.warn("Please first login to biconomy using above biconomy button !", {
                     position: toast.POSITION.TOP_RIGHT
@@ -125,16 +131,28 @@ class Index extends Component {
                 const permitBalance = await _inst.methods.allowance(accounts[0], walletAddress).call();
                 if(parseInt(permitBalance) >= parseInt(value)){
                     const hash = await transferFromTokens(web3, walletAddress, tokenSymbol, recipientAddress, parseInt(value));
-                    toast.success("You have transferred " + value +" DAI !", {
-                        position: toast.POSITION.TOP_RIGHT
-                    });
-                    await addTransaction(web3, contractInstance, biconomyAddress, tokenSymbol, recipientAddress, parseInt(value), hash);
-                    toast.success("Transaction Hash: "+ hash, {
-                        position: toast.POSITION.TOP_RIGHT
-                    });
-                    toast.success("Transaction added to transaction history !", {
-                        position: toast.POSITION.TOP_RIGHT
-                    });
+                    if(hash != "undefined") {
+                        toast.success("You have transferred " + value +" DAI !", {
+                            position: toast.POSITION.TOP_RIGHT
+                        });
+                        const addHash = await addTransaction(web3, contractInstance, biconomyAddress, tokenSymbol, recipientAddress, parseInt(value), hash);
+                        if(addHash != "undefined") {
+                            toast.success("Transaction Hash: "+ hash, {
+                                position: toast.POSITION.TOP_RIGHT
+                            });
+                            toast.success("Transaction added to transaction history !", {
+                                position: toast.POSITION.TOP_RIGHT
+                            });
+                        } else {
+                            toast.error("Transaction is not added in Transaction history!!", {
+                                position: toast.POSITION.TOP_RIGHT
+                            }); 
+                        }
+                    } else {
+                        toast.error("Transfer Failed!!", {
+                            position: toast.POSITION.TOP_RIGHT
+                        }); 
+                    }
                 } else {
                     alert("You need to first give permit to access your balance to wallet.");
                     await permitDai(web3, accounts[0], walletAddress);
@@ -148,16 +166,28 @@ class Index extends Component {
                     const biconomyAddressBalance = await _inst.methods.balanceOf(biconomyAddress).call();
                     if(parseInt(biconomyAddressBalance) >= parseInt(value)){    
                         const hash = await transferErc20(web3, _inst, recipientAddress, parseInt(value)); //transfer
-                        toast.success("You have transferred " + value + " " + this.state.tokenSymbol, {
-                            position: toast.POSITION.TOP_RIGHT
-                        });
-                        await addTransaction(web3, contractInstance, biconomyAddress, tokenSymbol, recipientAddress, parseInt(value), hash);
-                        toast.success("Transaction Hash: "+ hash, {
-                            position: toast.POSITION.TOP_RIGHT
-                        });
-                        toast.success("Transaction added to transaction history !", {
-                            position: toast.POSITION.TOP_RIGHT
-                        });
+                        if(hash != "undefined") {
+                            toast.success("You have transferred " + value + " " + this.state.tokenSymbol, {
+                                position: toast.POSITION.TOP_RIGHT
+                            });
+                            const addHash = await addTransaction(web3, contractInstance, biconomyAddress, tokenSymbol, recipientAddress, parseInt(value), hash);
+                            if(addHash != "undefined") {
+                                toast.success("Transaction Hash: "+ hash, {
+                                    position: toast.POSITION.TOP_RIGHT
+                                });
+                                toast.success("Transaction added to transaction history !", {
+                                    position: toast.POSITION.TOP_RIGHT
+                                });
+                            } else {
+                                toast.error("Transaction is not added in Transaction history!!", {
+                                    position: toast.POSITION.TOP_RIGHT
+                                }); 
+                            }
+                        } else {
+                            toast.error("Transfer Failed!!", {
+                                position: toast.POSITION.TOP_RIGHT
+                            }); 
+                        }
                     } else {
                         toast.error("Not Enough Deposit crypto in biconomy account address. Plase deposit crypto by Deposit section.", {
                             position: toast.POSITION.TOP_RIGHT
