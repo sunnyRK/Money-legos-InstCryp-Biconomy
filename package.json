@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "@biconomy/mexa": "^1.5.3",
+    "axios": "^0.19.2",
     "css-loader": "^3.5.3",
     "next": "^9.1.5",
     "next-routes": "^1.4.2",

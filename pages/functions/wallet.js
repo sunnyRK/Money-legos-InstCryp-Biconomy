@@ -1,4 +1,5 @@
 import {getWalletContractInstance} from './contractinstance'
+import { ToastContainer, toast } from 'react-toastify';
 
 export async function approve(web3, contractInstance, spender, value) {
     try{
@@ -23,7 +24,7 @@ export async function approve(web3, contractInstance, spender, value) {
 export async function transferFromTokens(web3, walletAddress, tokenSymbol, recipientAddress, value) {
     let transactionHash;
     try{
-        console.log("Transfer");
+        console.log("Transfer DAI");
         const accounts = await web3.eth.getAccounts();
         const contractInstance = getWalletContractInstance(web3, walletAddress);
         await contractInstance.methods.transferFromTokens(
@@ -35,6 +36,9 @@ export async function transferFromTokens(web3, walletAddress, tokenSymbol, recip
             from:accounts[0]
         }).on("transactionHash", (hash) => {
             transactionHash = hash;
+            toast.success("Transferring DAI using meta-transaction!", {
+                position: toast.POSITION.TOP_RIGHT
+            });
             // alert("Transaction hash: " +  hash);
         }).once("confirmation", (confirmationCount, receipt) => {
             // alert("Transaction confirmed!")
@@ -96,7 +100,7 @@ export async function biconomyLogin(web3, contractInstance, biconomyAddress) {
 export async function addTransaction(web3, contractInstance, biconomyAddress, tokenSymbol, to, value, hash) {
     let transactionHash;
     try{
-        alert("Transfer Successfull. Now Adding Transaction to transaction history!");
+        alert("Transfer Successfull. Press ok to Add transaction in transaction history...!");
         const accounts = await web3.eth.getAccounts();
         await contractInstance.methods.addTransaction(
             biconomyAddress,
@@ -108,7 +112,7 @@ export async function addTransaction(web3, contractInstance, biconomyAddress, to
             from:accounts[0]
         }).on("transactionHash", (hash) => {
             transactionHash = hash
-            // alert("Transaction hash: " +  hash);
+            alert("Transaction hash: " +  hash);
         }).once("confirmation", (confirmationCount, receipt) => {
             // alert("Transaction confirmed!")
         }).on("error", (error) => {
@@ -122,9 +126,9 @@ export async function addTransaction(web3, contractInstance, biconomyAddress, to
     return transactionHash;
 }
 
-
 export async function transferErc20(web3, contractInstance, to, value) {
     let status;
+    let transactionHash;
     try{
         const accounts = await web3.eth.getAccounts();
         await contractInstance.methods.transfer(
@@ -134,6 +138,7 @@ export async function transferErc20(web3, contractInstance, to, value) {
             from:accounts[0]
         }).on("transactionHash", (hash) => {
             // alert("Transaction hash: " +  hash);
+            transactionHash = hash;
         }).once("confirmation", (confirmationCount, receipt) => {   
             // alert("Transaction confirmed!")
             console.log(receipt.status);
@@ -145,6 +150,7 @@ export async function transferErc20(web3, contractInstance, to, value) {
         console.log(err);
         return;
     }
-    return status;
+    var resp = [status.toString(), transactionHash];
+    return resp;
 }
 

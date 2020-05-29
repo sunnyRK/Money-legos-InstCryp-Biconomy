@@ -1,5 +1,17 @@
 import React, { Component } from 'react';
-import { Button, Form, Grid, Input, Dropdown, Segment, Message, Header, Container, List, Label} from 'semantic-ui-react';
+import { 
+    Button, 
+    Form, 
+    Grid, 
+    Input, 
+    Dropdown, 
+    Segment, 
+    Message, 
+    Container, 
+    List, 
+    Label
+} 
+from 'semantic-ui-react';
 import Layout from '../components/Layout';
 import { Router  } from '../routes';
 import biconomy from '../biconomyProvider/biconomy';
@@ -8,29 +20,50 @@ import realweb3 from '../biconomyProvider/realweb3';
 import permitDai from "./functions/permitDai";
 import { ToastContainer, toast } from 'react-toastify';
 import {getERCContractInstance, getWalletContractInstance} from './functions/contractinstance'
-
+const Web3 = require("web3");
 import {
     transferErc20,
     transferFromTokens,
     biconomyLogin,
-    addTransaction,
-} from './functions/wallet'
+    // addTransaction,
+} from './functions/wallet';
+import {addTransaction} from './functions/api'
 
 class Index extends Component {
 
     state = {
+        tokenBalanceSymbol: 'DAI',
         tokenSymbol: 'DAI',
         sendLoanding: false,
         recipientAddress: '',
         value: '',
-        collateralTokenSymbol: 'KNC',
+        collateralTokenSymbol: 'TKN',
         collateralUploadLoading: false,
         collateralValue: '',
         metamaskAddress: 'Not Logged in',
         biconomyAddress: 'Not Logged in',
         biconomyLoginLoading: false,
-        transactionLoading: false
+        transactionLoading: false,
+        balanceLoading: false, 
+        tokenBalance: ''
     }
+
+    // ethEnabled = async () => {
+    //     if (window.web3) {
+    //       window.web3 = new Web3(window.web3.currentProvider);
+    //       window.ethereum.enable();
+    //       return true;
+    //     }
+    //     return false;
+    // };
+
+    async componentDidMount(){  
+        window.ethereum.enable()
+        window.web3 = web3
+  
+        const address = (await web3.eth.getAccounts())[0]
+        console.log("Wallet address: ", address)
+    }  
 
     onBiconomyLogin = async () => {
         try {
@@ -38,31 +71,54 @@ class Index extends Component {
             var accounts = await web3.eth.getAccounts();
             var walletAddress = '0xD16AdDBF04Bd39DC2Cb7F87942F904D4a7B8281B'; // spender address kovan
             const contractInstance = getWalletContractInstance(web3, walletAddress);
-            const bAddress = await contractInstance.methods.getBiconomyAddress(accounts[0]).call();
-            if(bAddress == "0x0000000000000000000000000000000000000000" || bAddress == "") {
-                let response = await biconomy.login(accounts[0]);
+            let responseAddress;
+            
+            let response = await biconomy.login(accounts[0]);
                 if(response && response.transactionHash) {
                     console.log("Please wait...");
-                    await biconomyLogin(web3, contractInstance, response.userContract);
-                    this.setState({
-                        biconomyAddress: response.userContract,
-                        metamaskAddress: accounts[0]
-                    });
+                    console.log(response);
+                    let response2 = await biconomy.login(accounts[0]);
+                    console.log(response2);
+                    alert("Login Successful...");
+                    responseAddress = response2.userContract;
+                    const bAddress = await contractInstance.methods.getBiconomyAddress(accounts[0]).call();
+                    if(bAddress == "0x0000000000000000000000000000000000000000" || bAddress == "") {
+                        alert("You are new biconomy user so press ok to register address in instcryp wallet");
+
+                        await biconomyLogin(web3, contractInstance, responseAddress);
+                            this.setState({
+                                biconomyAddress: responseAddress,
+                                metamaskAddress: accounts[0]
+                            });
+                    } else {
+                        this.setState({
+                            biconomyAddress: bAddress,
+                            metamaskAddress: accounts[0]
+                        });
+                    }
+
                 } else if (response && response.userContract) {
                     console.log("Successfully logged in...");
                     console.log(response.userContract);
-                    await biconomyLogin(web3, contractInstance, response.userContract);
-                    this.setState({
-                        biconomyAddress: response.userContract,
-                        metamaskAddress: accounts[0]
-                    });
+                    responseAddress = response.userContract;
+                    alert("Login Successful...");
+
+                    const bAddress = await contractInstance.methods.getBiconomyAddress(accounts[0]).call();
+                    if(bAddress == "0x0000000000000000000000000000000000000000" || bAddress == "") {
+                        alert("You are new biconomy user so press ok to register address in instcryp wallet");
+                        await biconomyLogin(web3, contractInstance, responseAddress);
+                            this.setState({
+                                biconomyAddress: responseAddress,
+                                metamaskAddress: accounts[0]
+                            });
+                    } else {
+                        this.setState({
+                            biconomyAddress: bAddress,
+                            metamaskAddress: accounts[0]
+                        });
+                    }
                 }
-            } else {
-                this.setState({
-                    biconomyAddress: bAddress,
-                    metamaskAddress: accounts[0]
-                });
-            }
+            
             toast.success("You are logged in !", {
                 position: toast.POSITION.TOP_RIGHT
             });
@@ -70,7 +126,7 @@ class Index extends Component {
         } catch (error) {
             this.setState({biconomyLoginLoading:false});
             alert("Error")
-            alert(error);
+            console.log(error);
         }
     };
 
@@ -128,35 +184,41 @@ class Index extends Component {
 
             if(tokenSymbol == "DAI"){
                 const _inst = await getERCContractInstance(web3, this.state.tokenSymbol);
-                const permitBalance = await _inst.methods.allowance(accounts[0], walletAddress).call();
-                if(parseInt(permitBalance) >= parseInt(value)){
-                    const hash = await transferFromTokens(web3, walletAddress, tokenSymbol, recipientAddress, parseInt(value));
-                    if(hash != "undefined") {
-                        toast.success("You have transferred " + value +" DAI !", {
-                            position: toast.POSITION.TOP_RIGHT
-                        });
-                        const addHash = await addTransaction(web3, contractInstance, biconomyAddress, tokenSymbol, recipientAddress, parseInt(value), hash);
-                        if(addHash != "undefined") {
-                            toast.success("Transaction Hash: "+ hash, {
+                
+                const daiBalance = await _inst.methods.balanceOf(accounts[0]).call();
+                if(parseInt(daiBalance) >= parseInt(value)){   
+                    const permitBalance = await _inst.methods.allowance(accounts[0], walletAddress).call();
+                    if(parseInt(permitBalance) >= parseInt(value)){
+                        const hash = await transferFromTokens(web3, walletAddress, tokenSymbol, recipientAddress, parseInt(value));
+                        if(hash != "undefined") {
+                            toast.success("You have transferred " + value +" DAI !", {
                                 position: toast.POSITION.TOP_RIGHT
                             });
-                            toast.success("Transaction added to transaction history !", {
-                                position: toast.POSITION.TOP_RIGHT
-                            });
+                            // const addHash = 
+                            await addTransaction(biconomyAddress, tokenSymbol, recipientAddress, parseInt(value), hash);
+                            // if(addHash != "undefined") {
+                            //     toast.success("Transaction added to transaction history !", {
+                            //         position: toast.POSITION.TOP_RIGHT
+                            //     });
+                            //     toast.success("Transaction Hash: "+ addHash, {
+                            //         position: toast.POSITION.TOP_RIGHT
+                            //     });
+                            // } else {
+                            //     toast.error("Transaction is not added in Transaction history!!", {
+                            //         position: toast.POSITION.TOP_RIGHT
+                            //     }); 
+                            // }
                         } else {
-                            toast.error("Transaction is not added in Transaction history!!", {
+                            toast.error("Transfer Failed!!", {
                                 position: toast.POSITION.TOP_RIGHT
                             }); 
                         }
                     } else {
-                        toast.error("Transfer Failed!!", {
-                            position: toast.POSITION.TOP_RIGHT
-                        }); 
+                        alert("You need to first give permit to access your balance to wallet.");
+                        await permitDai(web3, accounts[0], walletAddress, recipientAddress, parseInt(value), contractInstance, biconomyAddress);
                     }
                 } else {
-                    alert("You need to first give permit to access your balance to wallet.");
-                    await permitDai(web3, accounts[0], walletAddress);
-                    toast.success("You have given permission to transfer DAI !", {
+                    toast.error("Insufficient Balance.", {
                         position: toast.POSITION.TOP_RIGHT
                     });
                 }
@@ -166,23 +228,25 @@ class Index extends Component {
                     const biconomyAddressBalance = await _inst.methods.balanceOf(biconomyAddress).call();
                     if(parseInt(biconomyAddressBalance) >= parseInt(value)){    
                         const hash = await transferErc20(web3, _inst, recipientAddress, parseInt(value)); //transfer
-                        if(hash != "undefined") {
+                        if(hash[0]) {
                             toast.success("You have transferred " + value + " " + this.state.tokenSymbol, {
                                 position: toast.POSITION.TOP_RIGHT
                             });
-                            const addHash = await addTransaction(web3, contractInstance, biconomyAddress, tokenSymbol, recipientAddress, parseInt(value), hash);
-                            if(addHash != "undefined") {
-                                toast.success("Transaction Hash: "+ hash, {
-                                    position: toast.POSITION.TOP_RIGHT
-                                });
-                                toast.success("Transaction added to transaction history !", {
-                                    position: toast.POSITION.TOP_RIGHT
-                                });
-                            } else {
-                                toast.error("Transaction is not added in Transaction history!!", {
-                                    position: toast.POSITION.TOP_RIGHT
-                                }); 
-                            }
+
+                            // const addHash = 
+                            await addTransaction(biconomyAddress, tokenSymbol, recipientAddress, parseInt(value), hash[1]);
+                            // if(addHash != undefined || addHash != "undefined") {
+                            //     toast.success("Transaction added to transaction history !", {
+                            //         position: toast.POSITION.TOP_RIGHT
+                            //     });
+                            //     toast.success("Transaction Hash: "+ addHash, {
+                            //         position: toast.POSITION.TOP_RIGHT
+                            //     });
+                            // } else {
+                            //     toast.error("Transaction is not added in Transaction history!!", {
+                            //         position: toast.POSITION.TOP_RIGHT
+                            //     }); 
+                            // }
                         } else {
                             toast.error("Transfer Failed!!", {
                                 position: toast.POSITION.TOP_RIGHT
@@ -238,26 +302,48 @@ class Index extends Component {
         }
     };
 
+    checkBalance = async () => {
+        event.preventDefault();
+        try{
+            this.setState({balanceLoading:true});
+            var accounts = await web3.eth.getAccounts();
+            const _inst = await getERCContractInstance(web3, this.state.tokenBalanceSymbol);
+            const balance = await _inst.methods.balanceOf(accounts[0]).call();
+            const balanceinether = balance/1000000000000000000;
+            const tokenBalanceLine = "Total "+ balanceinether.toFixed(2) +"("+balance+" in wei) " + this.state.tokenBalanceSymbol + " of balance you have "; 
+            this.setState({
+                balanceLoading:false,
+                tokenBalance: tokenBalanceLine
+            });
+        }catch(err){
+            alert(err);
+            this.setState({balanceLoading:false});
+        }
+    };
+
     handleChangeTokenSymbol =  (e, { value }) => this.setState({ tokenSymbol: value }); 
     handleChangeCollateralTokenSymbol =  (e, { value }) => this.setState({ collateralTokenSymbol: value }); 
+    handleChangeTokenSymbolBalance =  (e, { value }) => this.setState({ tokenBalanceSymbol: value }); 
 
     render() {
 
         const options = [
             { key: 'dai', text: 'DAI', value: 'DAI' },
-            { key: 'eth', text: 'ETH', value: 'ETH' },
-            { key: 'bat', text: 'BAT', value: 'BAT' },
-            { key: 'knc', text: 'KNC', value: 'KNC' },
-            { key: 'zil', text: 'ZIL', value: 'ZIL' },
+            // { key: 'eth', text: 'ETH', value: 'ETH' },
+            // { key: 'bat', text: 'BAT', value: 'BAT' },
+            // { key: 'knc', text: 'KNC', value: 'KNC' },
+            // { key: 'zil', text: 'ZIL', value: 'ZIL' },
             { key: 'tkn', text: 'TKN', value: 'TKN' },
+            { key: 'sai', text: 'SAI', value: 'SAI' },
         ]
 
         const collateralOptions = [
-            { key: 'eth', text: 'ETH', value: 'ETH' },
-            { key: 'bat', text: 'BAT', value: 'BAT' },
-            { key: 'knc', text: 'KNC', value: 'KNC' },
-            { key: 'zil', text: 'ZIL', value: 'ZIL' },
+            // { key: 'eth', text: 'ETH', value: 'ETH' },
+            // { key: 'bat', text: 'BAT', value: 'BAT' },
+            // { key: 'knc', text: 'KNC', value: 'KNC' },
+            // { key: 'zil', text: 'ZIL', value: 'ZIL' },
             { key: 'tkn', text: 'TKN', value: 'TKN' },
+            { key: 'sai', text: 'SAI', value: 'SAI' },
         ]
 
         return (
@@ -315,6 +401,40 @@ class Index extends Component {
                         </Grid>
                     </Segment>
 
+                    <Segment style={{backgroundColor:"#f5f5f5"}}>
+                        <Grid columns={2} divided stackable >
+                            <Grid.Row verticalalign='middle' style={{margin:'10px'}}>
+                                <Grid.Column width={8}>
+                                    <Message info>
+                                        <Message.Header>Check Balance of token</Message.Header>
+                                    </Message>
+                                </Grid.Column>
+                                    
+                                <Grid.Column width={8}>
+                                    <Form onSubmit={this.checkBalance}>
+                                        <Button.Group color='black'>
+                                            <Button basic color='black'>Check Balance</Button>
+                                            <Dropdown
+                                                className='button icon'
+                                                floating
+                                                color="white"
+                                                trigger={<React.Fragment />}
+                                                options={options}
+                                                value={this.state.tokenBalanceSymbol} 
+                                                onChange={this.handleChangeTokenSymbolBalance}
+                                            />
+                                        </Button.Group>
+                                    </Form>
+
+                                        <Message basic color="green">
+                                            <Message.Header>Balance</Message.Header> 
+                                            {this.state.tokenBalance}
+                                        </Message>
+                                </Grid.Column>
+                            </Grid.Row>
+                        </Grid>
+                    </Segment>
+
                     
                 <Segment style={{marginTop:'30px'}}>
                     <Grid stackable textAlign='center' style={{margin:"20px"}}>
@@ -356,7 +476,7 @@ class Index extends Component {
                                 <Form.Field>
                                     <Input 
                                     type = "input"
-                                    placeholder="Add value"
+                                    placeholder="Add value in Wei"
                                     value={this.state.value}
                                     onChange={event => 
                                         this.setState({
@@ -409,7 +529,7 @@ class Index extends Component {
                                         }
                                         type = "input"
                                         labelPosition="right"
-                                        placeholder="Add value"
+                                        placeholder="Add value in Wei"
                                         value={this.state.collateralValue}
                                         onChange={event => 
                                             this.setState({

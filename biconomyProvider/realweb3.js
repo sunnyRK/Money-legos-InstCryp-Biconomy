@@ -4,6 +4,7 @@ let realweb3;
 let provider;
 
 if (typeof window !== 'undefined' && typeof window.web3 !== 'undefined') {
+    
     provider = window.web3.currentProvider;
 
 } else {
@@ -12,9 +13,8 @@ if (typeof window !== 'undefined' && typeof window.web3 !== 'undefined') {
         'https://kovan.infura.io/v3/944f5399c18049d9920b3bc9c60583de'
     );
 }
-
+// typeof window.web3.enable();
 realweb3 = new Web3(provider);
-
 module.exports = realweb3
 
 
