@@ -58,7 +58,6 @@ class TransactionHistory extends Component {
         })
     }
 
-
     // async componentDidMount(){
     //     let transactionIdsOfBiconomy;
     //     const accounts = await web3.eth.getAccounts();
