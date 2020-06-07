@@ -6,9 +6,11 @@
   "dependencies": {
     "@biconomy/mexa": "^1.5.3",
     "axios": "^0.19.2",
+    "bignumber.js": "^9.0.0",
     "css-loader": "^3.5.3",
     "next": "^9.1.5",
     "next-routes": "^1.4.2",
+    "node-fetch": "^2.6.0",
     "openzeppelin-solidity": "^2.4.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",

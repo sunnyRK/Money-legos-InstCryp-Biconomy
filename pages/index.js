@@ -9,7 +9,8 @@ import {
     Message, 
     Container, 
     List, 
-    Label
+    Label,
+    Header, Icon, Image, Menu, Sidebar
 } 
 from 'semantic-ui-react';
 import Layout from '../components/Layout';
@@ -17,17 +18,21 @@ import { Router  } from '../routes';
 import biconomy from '../biconomyProvider/biconomy';
 import web3 from '../biconomyProvider/web3Biconomy';
 import realweb3 from '../biconomyProvider/realweb3';
-import permitDai from "./functions/permitDai";
+import permitDai from "./wallet/permitDai";
 import { ToastContainer, toast } from 'react-toastify';
-import {getERCContractInstance, getWalletContractInstance} from './functions/contractinstance'
-const Web3 = require("web3");
+import {getERCContractInstance, getWalletContractInstance} from './wallet/walletinstance'
+import Trade from './uniswap/Trade';
+import Liquidity from './uniswap/Liquidity';
+import Kyber from "./kyber/swap";
+import Collateral from "./collateral/collateral";
+
 import {
     transferErc20,
     transferFromTokens,
     biconomyLogin,
     // addTransaction,
-} from './functions/wallet';
-import {addTransaction} from './functions/api'
+} from './wallet/walletfunctions';
+import {addTransaction} from './wallet/walletapi'
 
 class Index extends Component {
 
@@ -37,9 +42,6 @@ class Index extends Component {
         sendLoanding: false,
         recipientAddress: '',
         value: '',
-        collateralTokenSymbol: 'TKN',
-        collateralUploadLoading: false,
-        collateralValue: '',
         metamaskAddress: 'Not Logged in',
         biconomyAddress: 'Not Logged in',
         biconomyLoginLoading: false,
@@ -47,15 +49,6 @@ class Index extends Component {
         balanceLoading: false, 
         tokenBalance: ''
     }
-
-    // ethEnabled = async () => {
-    //     if (window.web3) {
-    //       window.web3 = new Web3(window.web3.currentProvider);
-    //       window.ethereum.enable();
-    //       return true;
-    //     }
-    //     return false;
-    // };
 
     async componentDidMount(){  
         window.ethereum.enable()
@@ -129,41 +122,6 @@ class Index extends Component {
             console.log(error);
         }
     };
-
-    onAddCollateral = async () => {
-        event.preventDefault();
-        try {
-            this.setState({collateralUploadLoading:true});
-            var accounts = await web3.eth.getAccounts();
-            var walletAddress = '0xD16AdDBF04Bd39DC2Cb7F87942F904D4a7B8281B'; // spender address kovan
-            const contractInstance = getWalletContractInstance(web3, walletAddress);
-            const biconomyAddress = await contractInstance.methods.getBiconomyAddress(accounts[0]).call();
-
-            if(biconomyAddress != "0x0000000000000000000000000000000000000000" || biconomyAddress != "") {
-                var collateralTokenSymbol = this.state.collateralTokenSymbol;
-                var collateralValue = this.state.collateralValue;
-                const _inst = await getERCContractInstance(realweb3, collateralTokenSymbol);
-                const status = await  transferErc20(realweb3, _inst, biconomyAddress, collateralValue); //transfer collateral for meta transaction
-                if(status) {
-                    toast.success("You have deposited Crypto for meta transaction !", {
-                        position: toast.POSITION.TOP_RIGHT
-                    });
-                } else {
-                    toast.error("Transaction Failed!!", {
-                        position: toast.POSITION.TOP_RIGHT
-                    }); 
-                }
-            } else {
-                toast.warn("Please first login to biconomy using above biconomy button !", {
-                    position: toast.POSITION.TOP_RIGHT
-                });
-            }
-            this.setState({collateralUploadLoading:false});
-        } catch (error) {
-            this.setState({collateralUploadLoading:false});
-            console.log(error);
-        }
-    }
 
     onSubmit = async () => {
         event.preventDefault();
@@ -322,7 +280,6 @@ class Index extends Component {
     };
 
     handleChangeTokenSymbol =  (e, { value }) => this.setState({ tokenSymbol: value }); 
-    handleChangeCollateralTokenSymbol =  (e, { value }) => this.setState({ collateralTokenSymbol: value }); 
     handleChangeTokenSymbolBalance =  (e, { value }) => this.setState({ tokenBalanceSymbol: value }); 
 
     render() {
@@ -350,6 +307,32 @@ class Index extends Component {
             <Layout>
                 <ToastContainer/>
                     <Container>
+                        
+                        <Grid divided stackable>
+                            <Grid.Row verticalalign='middle' style={{margin:'10px'}}>
+                                <Grid.Column>
+                                        <Collateral/>
+                                </Grid.Column>
+                            </Grid.Row>
+                        </Grid>
+                        <Grid divided stackable>
+                            <Grid.Row verticalalign='middle' style={{margin:'10px'}}>
+                                <Grid.Column>
+                                        <Kyber/>
+                                </Grid.Column>
+                            </Grid.Row>
+                        </Grid>
+                        <Grid columns={2} divided stackable>
+                            <Grid.Row verticalalign='middle' style={{margin:'10px'}}>
+                                <Grid.Column>
+                                        <Trade/>
+                                </Grid.Column>
+                                <Grid.Column>
+                                        <Liquidity/>
+                                </Grid.Column>
+                            </Grid.Row>
+                        </Grid>
+                        
                         <Grid columns={2} divided stackable >
                             <Grid.Row verticalalign='middle' style={{margin:'10px'}}>
                                 <Grid.Column width={8}>
@@ -506,74 +489,21 @@ class Index extends Component {
                     </Grid>
                 </Segment>
 
-                <Segment style={{marginTop:'30px'}}>
-                    <Grid stackable textAlign='center' style={{margin:"20px"}}>
-                        <Grid.Row verticalalign='middle'>
-                            <Grid.Column>
-                                <Message>
-                                    <Message.Header>Deposit Section</Message.Header>
-                                    Deposit crypto token in biconomy account address for perform transfer crypto via gasless or meta-transaction.
-                                </Message>
-                            </Grid.Column>
-                        </Grid.Row>
-                        <Grid.Row verticalalign='middle'>
-                            <Grid.Column>
-                                <Form.Field>
-                                    <Input
-                                        label={
-                                            <Dropdown
-                                                options={collateralOptions}
-                                                value={this.state.collateralTokenSymbol} 
-                                                onChange={this.handleChangeCollateralTokenSymbol} 
-                                            />
-                                        }
-                                        type = "input"
-                                        labelPosition="right"
-                                        placeholder="Add value in Wei"
-                                        value={this.state.collateralValue}
-                                        onChange={event => 
-                                            this.setState({
-                                                collateralValue: event.target.value,
-                                        })}
-                                    style={{width:'300px', height:"40px"}}
-                                    />
-                                </Form.Field>
-                            </Grid.Column>
-                        </Grid.Row>   
-
-                        <Grid.Row verticalalign='middle'>
-                            <Grid.Column> 
-                                <Form onSubmit={this.onAddCollateral}>
-                                    <Form.Field>
-                                        <Button 
-                                            color="black"
-                                            bsStyle="primary" 
-                                            type="submit"
-                                            loading={this.state.collateralUploadLoading}> 
-                                            Deposit Crypto for meta transaction
-                                        </Button>
-                                    </Form.Field>
-                                </Form>
-                            </Grid.Column>
-                        </Grid.Row>
-                    </Grid>
-                </Segment>
-
-                    <Grid stackable style={{margin:"20px"}}>
-                        <Grid.Row verticalalign='middle'>
-                            <Grid.Column>
-                                <Message>
-                                    <Message.Header>Instructions</Message.Header>
-                                    <List as="ol">
-                                        <List.Item as="li" value='*'>Before any other transactions you need to perform biconomy login first.</List.Item>
-                                        <List.Item as="li" value='*'>For DAI meta transaction you need to first permit to wallet.</List.Item>
-                                        <List.Item as="li" value='*'>Other than DAI for any other crypto, you need to deposit that crypto in biconomy account address in deposit section then you can go to transfer section and can transfer fund via meta transaction.</List.Item>
-                                        <List.Item as="li" value='*'>This DAPP is currently for KOVAN network</List.Item>
-                                    </List>
-                                </Message>
-                            </Grid.Column>
-                        </Grid.Row>
-                    </Grid>
+                <Grid stackable style={{margin:"20px"}}>
+                    <Grid.Row verticalalign='middle'>
+                        <Grid.Column>
+                            <Message>
+                                <Message.Header>Instructions</Message.Header>
+                                <List as="ol">
+                                    <List.Item as="li" value='*'>Before any other transactions you need to perform biconomy login first.</List.Item>
+                                    <List.Item as="li" value='*'>For DAI meta transaction you need to first permit to wallet.</List.Item>
+                                    <List.Item as="li" value='*'>Other than DAI for any other crypto, you need to deposit that crypto in biconomy account address in deposit section then you can go to transfer section and can transfer fund via meta transaction.</List.Item>
+                                    <List.Item as="li" value='*'>This DAPP is currently for KOVAN network</List.Item>
+                                </List>
+                            </Message>
+                        </Grid.Column>
+                    </Grid.Row>
+                </Grid>
                 </Container>
             </Layout>
         );

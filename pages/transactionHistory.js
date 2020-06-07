@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { Grid, Segment, Card, Message, Container} from 'semantic-ui-react';
 import Layout from '../components/Layout';
-import web3 from '../biconomyProvider/web3Biconomy';
-import {getWalletContractInstance} from './functions/contractinstance'
 import Axios from 'axios';
 
 class TransactionHistory extends Component {

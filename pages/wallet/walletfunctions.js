@@ -1,4 +1,4 @@
-import {getWalletContractInstance} from './contractinstance'
+import {getWalletContractInstance} from './walletinstance'
 import { ToastContainer, toast } from 'react-toastify';
 
 export async function approve(web3, contractInstance, spender, value) {

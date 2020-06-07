@@ -1,11 +1,11 @@
 // import Interface from "./interface.json";
-import { getERCContractInstance } from './contractinstance'
+import { getERCContractInstance } from './walletinstance'
 import { ToastContainer, toast } from 'react-toastify';
 
 import {
   transferFromTokens,
   addTransaction,
-} from './wallet'
+} from './walletfunctions'
 
 const domainSchema = [
   { name: "name", type: "string" },
