@@ -148,60 +148,53 @@ class Trade extends Component {
     render() {
         return(
             <Tab.Pane attached={false}>
-                    {/* <Grid columns={2} divided stackable>
-                        <Grid.Row>
-                            <Grid.Column> */}
-                                <Label as="a" tag color="blue">
-                                    For Traders
-                                </Label>
-                                <Segment color="blue" textAlign='center'>    
-                                    <Message color="blue">
-                                        <Message.Header>Automate Trade</Message.Header>
-                                    </Message>
-                                    <Form onSubmit={this.swapExactTokensForTokens}>
-                                        
-                                        <Form.Field>
-                                            <Dropdown
-                                                placeholder="Select pair tokens.."
-                                                value={this.state.tradePairTokens} 
-                                                options={tagOptions}
-                                                onChange={this.handlePairs} 
-                                                fluid selection     
-                                            />
-                                        </Form.Field>
-                                        <Form.Field>
-                                            <Input
-                                                label={
-                                                    <Dropdown
-                                                        options={this.state.pairTokens}
-                                                        onChange={this.handlePairTokens} 
-                                                    />
-                                                }
-                                                color="teal"
-                                                type = "input"
-                                                labelPosition="right"
-                                                placeholder="Add value in Wei"
-                                                value={this.state.amountSwapDesired}
-                                                onChange={this.handleInputPrice}
-                                            />
-                                        </Form.Field>
-                                        <Form.Field>
-                                            <Button 
-                                                color="blue"
-                                                bsStyle="primary" 
-                                                type="submit"
-                                                loading={this.state.tradeLoading}
-                                                style={{width:"280px", height:"40px"}}> 
-                                                <Icon name="american sign language interpreting"></Icon>
-                                                Trade
-                                            </Button>
-                                        </Form.Field>
-                                    </Form>
-                                    </Segment>    
-                                {/* </Grid.Column>
-                        </Grid.Row>
-                    </Grid> */}
-                </Tab.Pane>
+                <Label as="a" tag color="blue">
+                    For Traders
+                </Label>
+                <Segment color="blue" textAlign='center'>    
+                    <Message color="blue">
+                        <Message.Header>Automate Trade</Message.Header>
+                    </Message>
+                    <Form onSubmit={this.swapExactTokensForTokens}>
+                        <Form.Field>
+                            <Dropdown
+                                placeholder="Select pair tokens.."
+                                value={this.state.tradePairTokens} 
+                                options={tagOptions}
+                                onChange={this.handlePairs} 
+                                fluid selection     
+                            />
+                        </Form.Field>
+                        <Form.Field>
+                            <Input
+                                label={
+                                    <Dropdown
+                                        options={this.state.pairTokens}
+                                        onChange={this.handlePairTokens} 
+                                    />
+                                }
+                                color="teal"
+                                type = "input"
+                                labelPosition="right"
+                                placeholder="Add value in Wei"
+                                value={this.state.amountSwapDesired}
+                                onChange={this.handleInputPrice}
+                            />
+                        </Form.Field>
+                        <Form.Field>
+                            <Button 
+                                color="blue"
+                                bsStyle="primary" 
+                                type="submit"
+                                loading={this.state.tradeLoading}
+                                style={{width:"280px", height:"40px"}}> 
+                                <Icon name="american sign language interpreting"></Icon>
+                                Trade
+                            </Button>
+                        </Form.Field>
+                    </Form>
+                </Segment>
+            </Tab.Pane>
         );
     }
 

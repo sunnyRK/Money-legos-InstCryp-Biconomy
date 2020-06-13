@@ -99,9 +99,14 @@ export const TokenInfoArray = [
     // },
     {
       key: 'DAI-KNC',
-      text: 'DAI-KNC',
+      text: (
+        <div>
+          <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" />
+          DAI - <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" /> KNC
+        </div>
+      ),
       value: 'DAI-KNC',
-      label: { color: 'blue', empty: true, circular: true },
+    //   label: { color: 'blue', empty: true, circular: true },
     }
   ];
   
