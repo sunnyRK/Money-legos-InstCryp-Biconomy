@@ -1,6 +1,7 @@
 const web3 = require('../../biconomyProvider/realweb3');
 const web3Biconomy = require('../../biconomyProvider/web3Biconomy');
 
+
 // Connecting to ropsten infura node
 export const NETWORK = "kovan";
 export const PROJECT_ID = "944f5399c18049d9920b3bc9c60583de"; //Replace this with your own Project ID
