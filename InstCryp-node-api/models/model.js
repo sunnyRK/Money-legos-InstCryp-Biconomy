@@ -6,9 +6,13 @@ const TransactionSchema = new Schema({
         type: String,
         required: [true, 'transactionHash field is required']
     },
-    from:{
+    web3from:{
         type: String,
-        required: [true, 'token0 field is required']
+        required: [true, 'web3token0 field is required']
+    },
+    biconomyfrom:{
+        type: String,
+        required: [true, 'biconomytoken0 field is required']
     },
     to:{
         type: String,
@@ -24,5 +28,5 @@ const TransactionSchema = new Schema({
     }
 });
 
-const transaction = mongoose.model("InstCrypSchema",TransactionSchema);
+const transaction = mongoose.model("InstCryptSchema",TransactionSchema);
 module.exports = transaction;

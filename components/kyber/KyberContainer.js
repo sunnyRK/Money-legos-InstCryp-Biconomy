@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import Kyber from './Kyber';
-import { getRates, trade, approveContract } from './kyber-helper/kyberjs';
+import { getRates, trade, approveContract } from './kyber-helper/kyberHelper';
 import {
   MAX_ALLOWANCE, convertInWei, REF_ADDRESS,
   getSrcTokenContract, KYBER_NETWORK_PROXY_ADDRESS, TokenInfoArray,

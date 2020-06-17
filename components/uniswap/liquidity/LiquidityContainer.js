@@ -83,7 +83,7 @@ class LiquidityContainer extends Component {
       const accounts = await web3.eth.getAccounts();
       const erc20ContractInstance1 = await getERCContractInstance(web3Biconomy, this.state.removeTokenPair);
       const poolTokenBalance = await erc20ContractInstance1.methods.balanceOf('0x6fC3D06462A5518EA370D0E4Bd1525649CE0fC6c').call();
-      if (parseInt(poolTokenBalance) >= parseInt(this.state.removeLiquidityTokenAmount)) {
+      if (parseInt(poolTokenBalance) < parseInt(this.state.removeLiquidityTokenAmount)) {
         const allowancePair = await erc20ContractInstance1.methods.allowance('0x6fC3D06462A5518EA370D0E4Bd1525649CE0fC6c', this.state.routeraddress).call();
 
         if (parseInt(allowancePair) < parseInt(this.state.removeLiquidityTokenAmount)) {

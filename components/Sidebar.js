@@ -6,10 +6,9 @@ import {
 import TransactionHistory from './transaction-history/TransactionHistoryContainer';
 import ProfileActions from './profile-actions/ProfileActionsContainer';
 
-
 export default ({
   menuItems, children, onMenuItemClick, activeIndex, onBiconomyLogin,
-  biconomyAddress, biconomyLoginLoading, metamaskAddress,
+  biconomyAddress, biconomyLoginLoading, metamaskAddress, onDeposit, onWithdraw
   // showTransactionHistory,
 }) => (
   <Sidebar.Pushable as={Segment} className="sidebar-wrapper">
@@ -51,6 +50,8 @@ export default ({
                 biconomyAddress={biconomyAddress}
                 biconomyLoginLoading={biconomyLoginLoading}
                 metamaskAddress={metamaskAddress}
+                onDeposit={onDeposit}
+                onWithdraw={onWithdraw}
               />
             </div>
           </Sidebar.Pusher>

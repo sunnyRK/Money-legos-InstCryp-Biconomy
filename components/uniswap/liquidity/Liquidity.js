@@ -76,6 +76,7 @@ const Liquidity = ({
           type="submit"
           loading={addLiquidityLoading}
           primary
+          onClick={(event) => addLiquidity(event)}
         >
           {/* <Icon name="add circle" /> */}
           Add Liquidity

@@ -43,7 +43,10 @@ const options = [
 
 const ProfileActions = ({
   onBiconomyLogin, biconomyAddress, biconomyLoginLoading,
-  metamaskAddress,
+  metamaskAddress, onDeposit, collateralUploadLoading, 
+  handleCollateralValue, handleChangeCollateralTokenSymbol,
+  onWithdraw, removeCollateralUploadLoading,
+  handleremoveCollateralValue, handleChangeremoveCollateralTokenSymbol,
 }) => (
   <div className="login-info">
     <div className="metamask-info card">
@@ -79,13 +82,14 @@ const ProfileActions = ({
           width={16}
           className="form-control"
           placeholder="EnterValue"
+          onChange={handleCollateralValue}
           label={(
             <Dropdown
               options={options}
               defaultValue={options[0].value}
               className="form-control"
-              // onChange={() => handleDeposit()}
-            />
+              onChange={handleChangeCollateralTokenSymbol}
+              />
           )}
           labelPosition="left"
         />
@@ -96,6 +100,8 @@ const ProfileActions = ({
           type="submit"
           className="transact-button form-control"
           primary
+          loading={collateralUploadLoading}
+          onClick={() => onDeposit()}
         >
           Deposit
         </Button>
@@ -109,13 +115,14 @@ const ProfileActions = ({
           width={16}
           className="form-control"
           placeholder="Enter value"
+          onChange={handleremoveCollateralValue}
           label={(
             <Dropdown
               options={options}
               defaultValue={options[0].value}
               className="form-control"
-              // onChange={() => handleWithdraw)}
-            />
+              onChange={handleChangeremoveCollateralTokenSymbol}
+              />
           )}
           labelPosition="left"
         />
@@ -126,6 +133,8 @@ const ProfileActions = ({
           type="submit"
           className="transact-button form-control"
           primary
+          loading={removeCollateralUploadLoading}
+          onClick={() => onWithdraw()}
         >
           Withdraw
         </Button>

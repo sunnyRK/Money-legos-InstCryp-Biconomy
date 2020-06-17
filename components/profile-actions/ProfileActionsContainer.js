@@ -85,7 +85,7 @@ class ProfileActionsContainer extends Component {
     // const { biconomyLoginLoading, biconomyAddress, metamaskAddress } = this.state;
     const {
       onBiconomyLogin, biconomyAddress, biconomyLoginLoading,
-      metamaskAddress,
+      metamaskAddress, onDeposit, collateralUploadLoading
     } = this.props;
     return (
       <ProfileActions
@@ -95,6 +95,8 @@ class ProfileActionsContainer extends Component {
         metamaskAddress={metamaskAddress}
         biconomyLoginLoading={biconomyLoginLoading}
         metamaskAddress={metamaskAddress}
+        onDeposit={onDeposit}
+        collateralUploadLoading={collateralUploadLoading}
       />
     );
   }

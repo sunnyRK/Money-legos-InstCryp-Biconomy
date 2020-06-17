@@ -128,7 +128,7 @@ class WalletContainer extends Component {
         tokenBalance: tokenBalanceLine,
       });
     } catch (err) {
-      alert(err);
+      console.log(err);
       this.setState({ checkBalanceLoading: false });
     }
   };
@@ -167,7 +167,7 @@ class WalletContainer extends Component {
                 position: toast.POSITION.TOP_RIGHT,
               });
               // const addHash =
-              await addTransaction(biconomyAddress, tokenSymbol, recipientAddress, parseInt(value), hash);
+              await addTransaction(accounts[0], biconomyAddress, tokenSymbol, recipientAddress, parseInt(value), hash);
               // if(addHash != "undefined") {
               //     toast.success("Transaction added to transaction history !", {
               //         position: toast.POSITION.TOP_RIGHT
@@ -206,7 +206,7 @@ class WalletContainer extends Component {
               });
 
               // const addHash =
-              await addTransaction(biconomyAddress, tokenSymbol, recipientAddress, parseInt(value), hash[1]);
+              await addTransaction(accounts[0], biconomyAddress, tokenSymbol, recipientAddress, parseInt(value), hash[1]);
               // if(addHash != undefined || addHash != "undefined") {
               //     toast.success("Transaction added to transaction history !", {
               //         position: toast.POSITION.TOP_RIGHT

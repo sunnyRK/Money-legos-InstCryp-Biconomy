@@ -6,6 +6,7 @@ import { withRouter } from 'next/router';
 import Link from 'next/link';
 
 class Index extends Component {
+    
     render() {
         return (
           <Layout>
