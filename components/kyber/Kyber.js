@@ -9,46 +9,9 @@ import {
 
 export default ({
   firstToken, secondToken, addQty, handleChangeforFirstToken,
-  main, main3, handleChangeforSecondToken, convert, swapLoadding,
+  kyberTrade, reverseToken, handleChangeforSecondToken, convert, swapLoadding,
   handleState, convertedValue,
 }) => {
-  // const options = [
-  //   {
-  //     key: 'dai',
-  //     text: (
-  //       <div>
-  //         <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" />
-  //         DAI
-  //       </div>
-  //     ),
-  //     value: 'DAI',
-  //     // image: { avatar: true, src: 'https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png' },
-  //   },
-  //   // { key: 'eth', text: 'ETH', value: 'ETH' },
-  //   // { key: 'bat', text: 'BAT', value: 'BAT' },
-  //   // { key: 'knc', text: 'KNC', value: 'KNC' },
-  //   // { key: 'zil', text: 'ZIL', value: 'ZIL' },
-  //   {
-  //     key: 'tkn',
-  //     text: (
-  //       <div>
-  //         <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" />
-  //         TKN
-  //       </div>
-  //     ),
-  //     value: 'TKN',
-  //   },
-  //   {
-  //     key: 'sai',
-  //     text: (
-  //       <div>
-  //         <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" />
-  //         SAI
-  //       </div>
-  //     ),
-  //     value: 'SAI',
-  //   },
-  // ];
   const options = [
     {
       key: 'dai',
@@ -61,14 +24,14 @@ export default ({
       value: 'DAI',
     },
     {
-      key: 'eth',
+      key: 'weth',
       text: (
         <div>
           <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" />
-          ETH
+          WETH
         </div>
       ),
-      value: 'ETH',
+      value: 'WETH',
     },
     {
       key: 'bat',
@@ -79,8 +42,7 @@ export default ({
         </div>
       ),
       value: 'BAT',
-    },
-    {
+    },{
       key: 'knc',
       text: (
         <div>
@@ -129,7 +91,7 @@ export default ({
           <div
             className="middle-content"
             role="presentation"
-            onClick={() => main3()}
+            onClick={() => reverseToken()}
           >
             <Popup
               trigger={<i className="change_arrow" />}
@@ -166,7 +128,7 @@ export default ({
             bsStyle="primary"
             type="submit"
             loading={swapLoadding}
-            onClick={(event) => main(event)}
+            onClick={(event) => kyberTrade(event)}
             className="transfer-button"
           >
             <Icon name="american sign language interpreting" />

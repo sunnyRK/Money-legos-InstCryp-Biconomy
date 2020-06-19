@@ -1,8 +1,6 @@
 import React from 'react';
 import {
-  Button, Form, Input,
-  Segment, Grid, Dropdown,
-  Message, Icon, Divider, Label,
+  Button, Input, Dropdown,
 } from 'semantic-ui-react';
 
 const Liquidity = ({
@@ -13,16 +11,12 @@ const Liquidity = ({
   removeLiquidity, removeLiquidityLoading, handleState,
 }) => (
   <div className="liquidity">
-    {/* <Label as="a" tag color="green">
-      For Liquidity Providers
-    </Label> */}
     <div className="add-liquidity card">
       <h4>For Liquidity Providers</h4>
       <h3>Add Liquidity</h3>
       <div className="form-field">
         <label className="field-label">Pair tokens</label>
         <Dropdown
-          // style={{ margin: '0 auto', display: 'block' }}
           className="liquidity-pairs form-control"
           options={tagOptions}
           onChange={handleLiquidityPairs}
@@ -45,9 +39,6 @@ const Liquidity = ({
             });
           }}
           fluid
-          // onChange={(event) => this.setState({
-          //   addLiquidityamount0: event.target.value,
-          // })}
         />
       </div>
       <div className="form-field">
@@ -64,9 +55,6 @@ const Liquidity = ({
               addLiquidityamount1: event.target.value,
             });
           }}
-          // onChange={(event) => this.setState({
-          //   addLiquidityamount1: event.target.value,
-          // })}
         />
       </div>
       <div className="form-field button add-liquidity-footer">
@@ -78,14 +66,12 @@ const Liquidity = ({
           primary
           onClick={(event) => addLiquidity(event)}
         >
-          {/* <Icon name="add circle" /> */}
           Add Liquidity
         </Button>
       </div>
     </div>
 
     <div className="remove-liquidity card">
-      {/* <h4>For Liquidity Providers</h4> */}
       <h3>Remove Liquidity</h3>
       <div className="pool-wrapper">
         <div className="form-field ">

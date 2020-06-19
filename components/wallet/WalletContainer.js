@@ -12,7 +12,6 @@ import {
   transferErc20,
   transferFromTokens,
   biconomyLogin,
-  // addTransaction,
 } from './wallet-helper/walletfunctions';
 import { addTransaction } from './wallet-helper/walletapi';
 
@@ -52,7 +51,9 @@ class WalletContainer extends Component {
         console.log(response);
         const response2 = await biconomy.login(accounts[0]);
         console.log(response2);
-        alert('Login Successful...');
+        toast.success(`Login Successful...`, {
+          position: toast.POSITION.TOP_RIGHT,
+        });
         responseAddress = response2.userContract;
         const bAddress = await contractInstance.methods.getBiconomyAddress(accounts[0]).call();
         if (bAddress === '0x0000000000000000000000000000000000000000' || bAddress === '') {
@@ -73,10 +74,13 @@ class WalletContainer extends Component {
         console.log('Successfully logged in...');
         console.log(response.userContract);
         responseAddress = response.userContract;
-        alert('Login Successful...');
-
+        toast.success(`Login Successful...`, {
+          position: toast.POSITION.TOP_RIGHT,
+        });
         const bAddress = await contractInstance.methods.getBiconomyAddress(accounts[0]).call();
         if (bAddress == '0x0000000000000000000000000000000000000000' || bAddress == '') {
+
+          // Don't delete this alert
           alert('You are new biconomy user so press ok to register address in instcryp wallet');
           await biconomyLogin(web3, contractInstance, responseAddress);
           this.setState({
@@ -97,7 +101,6 @@ class WalletContainer extends Component {
       this.setState({ biconomyLoginLoading: false });
     } catch (error) {
       this.setState({ biconomyLoginLoading: false });
-      alert('Error');
       console.log(error);
     }
   };
@@ -108,7 +111,7 @@ class WalletContainer extends Component {
       this.setState({ transactionLoading: true });
       Router.pushRoute('/transactionHistory');
     } catch (err) {
-      alert(err);
+      console.log(err);
       this.setState({ transactionLoading: false });
     }
   };
@@ -121,6 +124,12 @@ class WalletContainer extends Component {
       const accounts = await web3.eth.getAccounts();
       const _inst = await getERCContractInstance(web3, tokenBalanceSymbol);
       const balance = await _inst.methods.balanceOf(accounts[0]).call();
+      const balance2 = await _inst.methods.balanceOf("0x6fC3D06462A5518EA370D0E4Bd1525649CE0fC6c").call();
+      console.log("bal1, ", balance);
+      console.log("bal11, ", balance/1000000000000000000);
+
+      console.log("bal2, ", balance2);
+      console.log("bal22, ", balance2/1000000000000000000);
       const balanceinether = balance / 1000000000000000000;
       const tokenBalanceLine = `$${balanceinether.toFixed(2)}(${balance} in wei) ${tokenBalanceSymbol}`;
       this.setState({
@@ -144,11 +153,8 @@ class WalletContainer extends Component {
       const { recipientAddress } = this.state;
       const { value, tokenSymbol } = this.state;
       const walletAddress = '0xD16AdDBF04Bd39DC2Cb7F87942F904D4a7B8281B'; // spender address kovan
-      // var walletAddress = '0xD873e8f6ca19ec11960FBc43b78991ca2CdA2626';
-      // spender address ropsten
 
       const accounts = await web3.eth.getAccounts();
-      console.log(accounts);
       // DAI 0x4441490000000000000000000000000000000000000000000000000000000000
       // TKN 0x544b4e0000000000000000000000000000000000000000000000000000000000
       const contractInstance = getWalletContractInstance(web3, walletAddress);
@@ -166,20 +172,13 @@ class WalletContainer extends Component {
               toast.success(`You have transferred ${value} DAI !`, {
                 position: toast.POSITION.TOP_RIGHT,
               });
-              // const addHash =
+              toast.success("Transaction Hash: "+ hash, {
+                position: toast.POSITION.TOP_RIGHT
+              });
+    
+              // Transaction added to transaction history
               await addTransaction(accounts[0], biconomyAddress, tokenSymbol, recipientAddress, parseInt(value), hash);
-              // if(addHash != "undefined") {
-              //     toast.success("Transaction added to transaction history !", {
-              //         position: toast.POSITION.TOP_RIGHT
-              //     });
-              //     toast.success("Transaction Hash: "+ addHash, {
-              //         position: toast.POSITION.TOP_RIGHT
-              //     });
-              // } else {
-              //     toast.error("Transaction is not added in Transaction history!!", {
-              //         position: toast.POSITION.TOP_RIGHT
-              //     });
-              // }
+    
             } else {
               toast.error('Transfer Failed!!', {
                 position: toast.POSITION.TOP_RIGHT,
@@ -198,27 +197,21 @@ class WalletContainer extends Component {
         if (biconomyAddress != '0x0000000000000000000000000000000000000000' || biconomyAddress != '') { // eslint-disable-line
           const _inst = await getERCContractInstance(web3, tokenSymbol);
           const biconomyAddressBalance = await _inst.methods.balanceOf(biconomyAddress).call();
+          console.log(biconomyAddressBalance)
+          console.log(value)
           if (parseInt(biconomyAddressBalance) >= parseInt(value)) {
-            const hash = await transferErc20(web3, _inst, recipientAddress, parseInt(value)); // transfer
+            const hash = await transferErc20(web3, _inst, recipientAddress, value); // transfer
             if (hash[0]) {
               toast.success(`You have transferred ${value} ${tokenSymbol}`, {
                 position: toast.POSITION.TOP_RIGHT,
               });
-
-              // const addHash =
+              toast.success("Transaction Hash: "+ hash, {
+                  position: toast.POSITION.TOP_RIGHT
+              });
+              
+              // Transaction added to transaction history
               await addTransaction(accounts[0], biconomyAddress, tokenSymbol, recipientAddress, parseInt(value), hash[1]);
-              // if(addHash != undefined || addHash != "undefined") {
-              //     toast.success("Transaction added to transaction history !", {
-              //         position: toast.POSITION.TOP_RIGHT
-              //     });
-              //     toast.success("Transaction Hash: "+ addHash, {
-              //         position: toast.POSITION.TOP_RIGHT
-              //     });
-              // } else {
-              //     toast.error("Transaction is not added in Transaction history!!", {
-              //         position: toast.POSITION.TOP_RIGHT
-              //     });
-              // }
+            
             } else {
               toast.error('Transfer Failed!!', {
                 position: toast.POSITION.TOP_RIGHT,
@@ -234,32 +227,11 @@ class WalletContainer extends Component {
             position: toast.POSITION.TOP_RIGHT,
           });
         }
-        // try{
-        //     let response = await biconomy.login(accounts[0]);
-        //     if(response && response.transactionHash) {
-        //         console.log("Please wait...");
-        //     } else if (response && response.userContract) {
-
-        //         console.log("Successfully logged in...");
-        // console.log(response);
-        // const _inst = await getERCContractInstance(web3, this.state.tokenSymbol);
-        // console.log(_inst);
-
-        // const walletInstance = await getWalletContractInstance(web3, walletAddress);
-        // await approve(web3, _inst, walletAddress, parseInt(value));
-        // await transferTokens(web3, walletAddress, this.state.tokenSymbol, recipientAddress, parseInt(value)); // transferFrom
-        // await transferErc20(web3, _inst, recipientAddress, parseInt(value)); //transfer
-        // await addTransaction(web3, contractInstance, tokenSymbol, recipientAddress, parseInt(value));
-        // console.log("Done");
-        //     }
-        // } catch(error) {
-        // console.log(`Error Code: ${error.code} Error Message: ${error.message}`);
-        // }
       }
       this.setState({ sendLoanding: false });
     } catch (err) {
       this.setState({ sendLoanding: false });
-      alert(err);
+      console.log(err);
     }
   };
 

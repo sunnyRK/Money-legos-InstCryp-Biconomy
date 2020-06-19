@@ -139,33 +139,32 @@ class Index extends Component {
       this.setState({ biconomyLoginLoading: false });
     } catch (error) {
       this.setState({ biconomyLoginLoading: false });
-      alert('Error');
       console.log(error);
     }
   };
 
   onDeposit = async () => {
     try {
-        alert("HI")
         this.setState({collateralUploadLoading:true});
-        var accounts = await web3.eth.getAccounts();
+        var accounts = await realweb3.eth.getAccounts();
         var walletAddress = '0xD16AdDBF04Bd39DC2Cb7F87942F904D4a7B8281B'; // spender address kovan
-        const contractInstance = getWalletContractInstance(web3, walletAddress);
+        const contractInstance = getWalletContractInstance(realweb3, walletAddress);
         const biconomyAddress = await contractInstance.methods.getBiconomyAddress(accounts[0]).call();
         if(biconomyAddress != "0x0000000000000000000000000000000000000000" || biconomyAddress != "") {
             var collateralTokenSymbol = this.state.collateralTokenSymbol;
             var collateralValue = this.state.collateralValue;
-            const _inst = await getERCContractInstance(realweb3, collateralTokenSymbol);
-            const status = await  transferErc20(realweb3, _inst, biconomyAddress, collateralValue); //transfer collateral for meta transaction
-            if(status) {
-                toast.success("You have deposited Crypto for meta transaction !", {
-                    position: toast.POSITION.TOP_RIGHT
-                });
-            } else {
-                toast.error("Transaction Failed!!", {
-                    position: toast.POSITION.TOP_RIGHT
-                }); 
-            }
+            // const _inst = await getERCContractInstance(realweb3, collateralTokenSymbol);
+            // alert(biconomyAddress)
+            // const status = await  transferErc20(realweb3, _inst, biconomyAddress, collateralValue); //transfer collateral for meta transaction
+            // if(status) {
+            //     toast.success("You have deposited Crypto for meta transaction !", {
+            //         position: toast.POSITION.TOP_RIGHT
+            //     });
+            // } else {
+                // toast.error("Transaction Failed!!", {
+                //     position: toast.POSITION.TOP_RIGHT
+                // }); 
+            // }
         } else {
             toast.warn("Please first login to biconomy using above biconomy button !", {
                 position: toast.POSITION.TOP_RIGHT
@@ -178,17 +177,11 @@ class Index extends Component {
       }
   }
 
-  onDeposit = async () => {
-    try {
-      
-    } catch (error) {
-      console.log(error);
-    }
-  }
 
   handleCollateralValue =  (e, { value }) => this.setState({ collateralValue: value }); 
-  handleChangeCollateralTokenSymbol =  (e, { value }) => this.setState({ collateralTokenSymbol: value }); 
-
+  handleChangeCollateralTokenSymbol =  (e, { value }) => {
+    this.setState({ collateralTokenSymbol: value }); 
+  };
   handleremoveCollateralValue =  (e, { value }) => this.setState({ removeCollateralValue: value }); 
   handleChangeremoveCollateralTokenSymbol =  (e, { value }) => this.setState({ removeCollateralTokenSymbol: value }); 
 
@@ -209,12 +202,13 @@ class Index extends Component {
           biconomyAddress={biconomyAddress}
           biconomyLoginLoading={biconomyLoginLoading}
           metamaskAddress={metamaskAddress}
-          onDeposit={this.onDeposit}
-          collateralUploadLoading={collateralUploadLoading}
-          collateralTokenSymbol={collateralTokenSymbol}
-          collateralValue={collateralValue}
-          handleCollateralValue={this.handleCollateralValue}
-          handleChangeCollateralTokenSymbol={this.handleChangeCollateralTokenSymbol}
+
+          // onDeposit={this.onDeposit}
+          // collateralUploadLoading={collateralUploadLoading}
+          // collateralTokenSymbol={collateralTokenSymbol}
+          // collateralValue={collateralValue}
+          // handleCollateralValue={this.handleCollateralValue}
+          // handleChangeCollateralTokenSymbol={this.handleChangeCollateralTokenSymbol}
 
           onWithdraw={this.onWithdraw}
           removeCollateralUploadLoading={removeCollateralUploadLoading}

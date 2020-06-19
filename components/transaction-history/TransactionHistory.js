@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Grid, Segment, Card, Message, Container} from 'semantic-ui-react';
+import { Grid, Segment, Card, Message, Container, Label} from 'semantic-ui-react';
 // import Layout from '../components/Layout';
 import Axios from 'axios';
 import web3Biconomy from '../../biconomyProvider/web3Biconomy';
@@ -45,7 +45,7 @@ class TransactionHistory extends Component {
               });
             } else {
                 console.log(res);
-                alert("Error");
+                // alert("Error");
             }
         })
         .catch(err => {

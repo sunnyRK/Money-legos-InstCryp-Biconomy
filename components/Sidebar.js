@@ -8,13 +8,12 @@ import ProfileActions from './profile-actions/ProfileActionsContainer';
 
 export default ({
   menuItems, children, onMenuItemClick, activeIndex, onBiconomyLogin,
-  biconomyAddress, biconomyLoginLoading, metamaskAddress, onDeposit, onWithdraw
+  biconomyAddress, biconomyLoginLoading, metamaskAddress, onDeposit, onWithdraw, handleChangeCollateralTokenSymbol
   // showTransactionHistory,
 }) => (
   <Sidebar.Pushable as={Segment} className="sidebar-wrapper">
     <Sidebar
       as={Menu}
-          // animation='overlay'
       icon="labeled"
       inverted
       vertical
@@ -50,8 +49,9 @@ export default ({
                 biconomyAddress={biconomyAddress}
                 biconomyLoginLoading={biconomyLoginLoading}
                 metamaskAddress={metamaskAddress}
-                onDeposit={onDeposit}
+                // onDeposit={onDeposit}
                 onWithdraw={onWithdraw}
+                // handleChangeCollateralTokenSymbol={handleChangeCollateralTokenSymbol}
               />
             </div>
           </Sidebar.Pusher>

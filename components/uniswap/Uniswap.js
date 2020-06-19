@@ -9,7 +9,7 @@ import Liquidity from './liquidity/LiquidityContainer';
 const Uniswap = ({
   swapExactTokensForTokens, tradePairTokens, tagOptions,
   handlePairs, pairTokens, handlePairTokens, amountSwapDesired,
-  handleInputPrice, tradeLoading,
+  handleInputPrice, tradeLoading
 }) => (
   <div className="uniswap">
     <div className="card balance">

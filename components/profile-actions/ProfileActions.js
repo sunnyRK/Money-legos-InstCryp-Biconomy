@@ -11,12 +11,46 @@ const options = [
       </div>
     ),
     value: 'DAI',
-    // image: { avatar: true, src: 'https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png' },
   },
-  // { key: 'eth', text: 'ETH', value: 'ETH' },
-  // { key: 'bat', text: 'BAT', value: 'BAT' },
-  // { key: 'knc', text: 'KNC', value: 'KNC' },
-  // { key: 'zil', text: 'ZIL', value: 'ZIL' },
+  {
+    key: 'weth',
+    text: (
+      <div>
+        <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" />
+        WETH
+      </div>
+    ),
+    value: 'WETH',
+  },
+  {
+    key: 'bat',
+    text: (
+      <div>
+        <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" />
+        BAT
+      </div>
+    ),
+    value: 'BAT',
+  },{
+    key: 'knc',
+    text: (
+      <div>
+        <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" />
+        KNC
+      </div>
+    ),
+    value: 'KNC',
+  },
+  {
+    key: 'zil',
+    text: (
+      <div>
+        <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" />
+        ZIL
+      </div>
+    ),
+    value: 'ZIL',
+  },
   {
     key: 'tkn',
     text: (
@@ -26,18 +60,6 @@ const options = [
       </div>
     ),
     value: 'TKN',
-    // image: { avatar: true, src: 'https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png' },
-  },
-  {
-    key: 'sai',
-    text: (
-      <div>
-        <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" />
-        SAI
-      </div>
-    ),
-    value: 'SAI',
-    // image: { avatar: true, src: 'https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png' },
   },
 ];
 

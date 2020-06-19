@@ -1,28 +1,25 @@
 import React, { Component } from 'react';
 // import Axios from 'axios';
+import { toast } from 'react-toastify';
 
 import Uniswap from './Uniswap';
 import web3 from '../../biconomyProvider/realweb3';
 import web3Biconomy from '../../biconomyProvider/web3Biconomy';
-import biconomy from '../../biconomyProvider/biconomy';
 import {
-  getUniswapV2Pair,
   getUniswapV2Router,
-  // getUniswapV2Library,
   getERCContractInstance,
   TokenInfoArray,
   PairInfoArray,
   tagOptions,
+  MAX_ALLOWANCE
 } from '../../config/swapconfig/contractinstances';
+import { getWalletContractInstance } from '../wallet/wallet-helper/walletinstance';
 
 class UniswapContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
       tradeLoading: false,
-      // addLiquidityLoading: false,
-      // removeLiquidityLoading: false,
-      // updateLoading: false,
       amountSwapDesired: '',
       // amountOut: '',
       pairTokens: [],
@@ -45,57 +42,57 @@ class UniswapContainer extends Component {
         this.setState({ tradeLoading: true });
         const accounts = await web3.eth.getAccounts();
 
-        let acc;
-        const response = await biconomy.login(accounts[0]);
-        if (response && response.transactionHash) {
-          console.log('response.transactionHash=====', response.transactionHash);
-        } else if (response && response.userContract) {
-          console.log(response.userContract);
-          acc = response.userContract;
-        }
-
+        const walletAddress = '0xD16AdDBF04Bd39DC2Cb7F87942F904D4a7B8281B'; // spender address kovan
+        const contractInstance = getWalletContractInstance(web3, walletAddress);
+        const acc = await contractInstance.methods.getBiconomyAddress(accounts[0]).call();
+  
         const erc20ContractInstance2 = await getERCContractInstance(web3Biconomy, token0);
-
-        // let allowance = await erc20ContractInstance2.methods.allowance(accounts[0], this.state.routeraddress).call();
-        // if(parseInt(allowance) < parseInt(this.state.amountSwapDesired)) {
-        await erc20ContractInstance2.methods.approve(
-          routeraddress, // Uniswap router address
-          amountSwapDesired,
-        ).send({
-          from: accounts[0]
-        });
-        // allowance = await erc20ContractInstance2.methods.allowance(accounts[0], this.state.routeraddress).call();
-        // }
-
+        let allowance = await erc20ContractInstance2.methods.allowance(acc, routeraddress).call();
+        console.log(acc)
+        console.log(allowance)
+        console.log(amountSwapDesired)
+        if(parseInt(allowance) < parseInt(amountSwapDesired)) {
+          await erc20ContractInstance2.methods.approve(
+            routeraddress, 
+            MAX_ALLOWANCE
+          ).send({
+            from: accounts[0]
+          });
+          toast.success("Transaction approved!!", {
+            position: toast.POSITION.TOP_RIGHT
+          }); 
+        }
         const biconomyAddressBalance = await erc20ContractInstance2.methods.balanceOf(acc).call();
-        const allowance1 = await erc20ContractInstance2.methods.allowance(accounts[0], routeraddress).call();
-        const allowance2 = await erc20ContractInstance2.methods.allowance(acc, routeraddress).call();
-        console.log(accounts[0]);
-        console.log(acc);
-        console.log('allownace: ', allowance1);
-        console.log('allownace: ', allowance2);
-        console.log('balance: ', biconomyAddressBalance);
-
-        const pairInstance = await getUniswapV2Pair(web3, pairAddress);
-        const reserves = await pairInstance.methods.getReserves().call();
-        console.log(reserves)
+        // const pairInstance = await getUniswapV2Pair(web3, pairAddress);
+        // const reserves = await pairInstance.methods.getReserves().call();
+        // console.log(reserves)
 
         const routeContractInstance = await getUniswapV2Router(web3Biconomy);
-        // console.log(web3Biconomy);
-        console.log(amountSwapDesired);
-        console.log(minValue);
-        console.log([TokenInfoArray[0][token0].token_contract_address, TokenInfoArray[0][token1].token_contract_address]);
-        console.log(acc);
-        // console.log(Math.floor(new Date().getTime()/1000) + 86400)
-        const transactionHash = await routeContractInstance.methods.swapExactTokensForTokens(
-          parseInt(amountSwapDesired),
-          parseInt(minValue),
-          [TokenInfoArray[0][token0].token_contract_address, TokenInfoArray[0][token1].token_contract_address],
-          accounts[0],
-          Math.floor(new Date().getTime() / 1000) + 86400,
-        ).send({
-          from: accounts[0],
-        });
+        // // console.log(Math.floor(new Date().getTime()/1000) + 86400)
+        if(parseInt(biconomyAddressBalance) >= parseInt(amountSwapDesired)) {
+          const transactionHash = await routeContractInstance.methods.swapExactTokensForTokens(
+            parseInt(amountSwapDesired),
+            parseInt(minValue),
+            [TokenInfoArray[0][token0].token_contract_address, TokenInfoArray[0][token1].token_contract_address],
+            accounts[0],
+            Math.floor(new Date().getTime() / 1000) + 86400,
+          ).send({
+            from: accounts[0],
+          });
+          console.log(transactionHash.transactionHash)
+          if(transactionHash.transactionHash != undefined && transactionHash.transactionHash != "") {
+            toast.success("Transaction Successfull!!", {
+              position: toast.POSITION.TOP_RIGHT
+            }); 
+            toast.success("Transaction Hash: " + transactionHash.transactionHash, {
+              position: toast.POSITION.TOP_RIGHT
+            }); 
+          } else {
+            toast.error("Transaction Failed!!", {
+              position: toast.POSITION.TOP_RIGHT
+            }); 
+          }
+        }
         this.setState({ tradeLoading: false });
       } catch (error) {
         this.setState({ tradeLoading: false });
@@ -173,6 +170,7 @@ class UniswapContainer extends Component {
           swapExactTokensForTokens={this.swapExactTokensForTokens}
           tradePairTokens={tradePairTokens}
           tagOptions={tagOptions}
+          MAX_ALLOWANCE={MAX_ALLOWANCE}
           handlePairs={this.handlePairs}
           pairTokens={pairTokens}
           handlePairTokens={this.handlePairTokens}

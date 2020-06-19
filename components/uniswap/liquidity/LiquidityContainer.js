@@ -62,7 +62,7 @@ class LiquidityContainer extends Component {
       if (this.state.removeTokenPair != '') {
         const accounts = await web3.eth.getAccounts();
         const erc20ContractInstance1 = await getERCContractInstance(web3, this.state.removeTokenPair);
-        const poolTokenBalance = await erc20ContractInstance1.methods.balanceOf(accounts[0]).call();
+        const poolTokenBalance = await erc20ContractInstance1.methods.balanceOf("0x6fC3D06462A5518EA370D0E4Bd1525649CE0fC6c").call();
         this.setState({
           removeLiquidityTokenAmount: poolTokenBalance,
         });
@@ -83,7 +83,7 @@ class LiquidityContainer extends Component {
       const accounts = await web3.eth.getAccounts();
       const erc20ContractInstance1 = await getERCContractInstance(web3Biconomy, this.state.removeTokenPair);
       const poolTokenBalance = await erc20ContractInstance1.methods.balanceOf('0x6fC3D06462A5518EA370D0E4Bd1525649CE0fC6c').call();
-      if (parseInt(poolTokenBalance) < parseInt(this.state.removeLiquidityTokenAmount)) {
+      if (parseInt(poolTokenBalance) >= parseInt(this.state.removeLiquidityTokenAmount)) {
         const allowancePair = await erc20ContractInstance1.methods.allowance('0x6fC3D06462A5518EA370D0E4Bd1525649CE0fC6c', this.state.routeraddress).call();
 
         if (parseInt(allowancePair) < parseInt(this.state.removeLiquidityTokenAmount)) {
@@ -96,7 +96,7 @@ class LiquidityContainer extends Component {
         }
 
         const routeContractInstance = await getUniswapV2Router(web3Biconomy);
-        await routeContractInstance.methods.removeLiquidity(
+        const transactionHash = await routeContractInstance.methods.removeLiquidity(
           TokenInfoArray[0][this.state.liquidityToken0].token_contract_address,
           TokenInfoArray[0][this.state.liquidityToken1].token_contract_address,
           this.state.removeLiquidityTokenAmount,
@@ -107,10 +107,20 @@ class LiquidityContainer extends Component {
         ).send({
           from: accounts[0],
         });
+        if(transactionHash.transactionHash != undefined && transactionHash.transactionHash != "") {
+          toast.success('Successfully removed liquidity!!', {
+            position: toast.POSITION.TOP_RIGHT,
+          });
+          toast.success("Transaction Hash: " + transactionHash.transactionHash, {
+            position: toast.POSITION.TOP_RIGHT
+          }); 
+        } else {
+          toast.error("Transaction Failed!!", {
+            position: toast.POSITION.TOP_RIGHT
+          }); 
+        }
         this.setState({ removeLiquidityLoading: false });
-        toast.success('Successfully removed liquidity!!', {
-          position: toast.POSITION.TOP_RIGHT,
-        });
+
       } else {
         toast.error(`You don't have ${this.state.removeLiquidityTokenAmount} liquidity to remove. Please enter valid liquidity!!`, {
           position: toast.POSITION.TOP_RIGHT,
@@ -128,8 +138,6 @@ class LiquidityContainer extends Component {
     try {
       this.setState({ addLiquidityLoading: true });
       const accounts = await web3.eth.getAccounts();
-      alert(this.state.liquidityToken0);
-      alert(this.state.liquidityToken1);
       const erc20ContractInstance1 = await getERCContractInstance(web3Biconomy, this.state.liquidityToken0);
       const erc20ContractInstance2 = await getERCContractInstance(web3Biconomy, this.state.liquidityToken1);
       const balance0 = await erc20ContractInstance1.methods.balanceOf('0x6fC3D06462A5518EA370D0E4Bd1525649CE0fC6c').call();
@@ -140,29 +148,24 @@ class LiquidityContainer extends Component {
           const allowanceToken0 = await erc20ContractInstance1.methods.allowance('0x6fC3D06462A5518EA370D0E4Bd1525649CE0fC6c', this.state.routeraddress).call();
           const allowanceToken1 = await erc20ContractInstance2.methods.allowance('0x6fC3D06462A5518EA370D0E4Bd1525649CE0fC6c', this.state.routeraddress).call();
           if (parseInt(allowanceToken0) < parseInt(this.state.addLiquidityamount0)) {
-            alert('2');
             await erc20ContractInstance1.methods.approve(
               this.state.routeraddress,
-              this.state.addLiquidityamount0,
+              parseInt(this.state.addLiquidityamount0),
             ).send({
               from: accounts[0],
             });
-            alert('1');
           }
 
           if (parseInt(allowanceToken1) < parseInt(this.state.addLiquidityamount1)) {
-            alert('3');
             await erc20ContractInstance2.methods.approve(
               this.state.routeraddress,
               this.state.addLiquidityamount1,
             ).send({
               from: accounts[0],
             });
-            alert('jj');
           }
-          alert('4');
           const routeContractInstance = await getUniswapV2Router(web3Biconomy);
-          await routeContractInstance.methods.addLiquidity(
+          const transactionHash = await routeContractInstance.methods.addLiquidity(
             TokenInfoArray[0][this.state.liquidityToken0].token_contract_address,
             TokenInfoArray[0][this.state.liquidityToken1].token_contract_address,
             this.state.addLiquidityamount0,
@@ -174,9 +177,18 @@ class LiquidityContainer extends Component {
           ).send({
             from: accounts[0],
           });
-          toast.success('Successfully added liquidity!!', {
-            position: toast.POSITION.TOP_RIGHT,
-          });
+          if(transactionHash.transactionHash != undefined && transactionHash.transactionHash != "") {
+            toast.success('Successfully added liquidity!!', {
+              position: toast.POSITION.TOP_RIGHT,
+            });
+            toast.success("Transaction Hash: " + transactionHash.transactionHash, {
+              position: toast.POSITION.TOP_RIGHT
+            }); 
+          } else {
+            toast.error("Transaction Failed!!", {
+              position: toast.POSITION.TOP_RIGHT
+            }); 
+          }
           this.setState({ addLiquidityLoading: false });
         } else {
           this.setState({ addLiquidityLoading: false });

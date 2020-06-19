@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
+import { toast } from 'react-toastify';
 
 import Kyber from './Kyber';
 import { getRates, trade, approveContract } from './kyber-helper/kyberHelper';
 import {
-  MAX_ALLOWANCE, convertInWei, REF_ADDRESS,
+  MAX_ALLOWANCE, convertInWei,
   getSrcTokenContract, KYBER_NETWORK_PROXY_ADDRESS, TokenInfoArray,
-} from '../../config/kyberconfig/config';
-
+} from '../../config/kyberconfig/kyberconfig';
+import web3 from "../../biconomyProvider/web3Biconomy";
+import { getWalletContractInstance } from '../wallet/wallet-helper/walletinstance';
 const BN = require('bignumber.js');
 
 class KyberContainer extends Component {
@@ -24,14 +26,14 @@ class KyberContainer extends Component {
     };
   }
 
-  main3 = async () => {
+  reverseToken = async () => {
     this.setState((prevState) => ({
       firstToken: prevState.secondToken,
       secondToken: prevState.firstToken,
     }));
   }
 
-  main = async (event) => {
+  kyberTrade = async (event) => {
     event.preventDefault();
     const {
       firstToken, secondToken, addQty, convertBtn,
@@ -39,53 +41,72 @@ class KyberContainer extends Component {
     } = this.state;
     try {
       this.setState({ swapLoadding: true, errorMessage: '' });
+      const accounts = await web3.eth.getAccounts();
       if (firstToken !== '') {
         if (secondToken !== '') {
           if (addQty !== '') {
-            // alert("Hi");
             if (convertBtn === 1) {
               if (expectedrate * addQty > 0) {
-                // Calculate slippage rate
-                const results = await getRates(TokenInfoArray[0][firstToken].token_contract_address,
-                  TokenInfoArray[0][secondToken].token_contract_address,
-                  convertInWei(addQty, TokenInfoArray[0][firstToken].decimals));
 
-                // Check KyberNetworkProxy contract allowance
-                const contractAllowance = await getSrcTokenContract(TokenInfoArray[0][firstToken].token_contract_address).methods
-                  .allowance(REF_ADDRESS, KYBER_NETWORK_PROXY_ADDRESS)
-                  .call();
+                const walletAddress = '0xD16AdDBF04Bd39DC2Cb7F87942F904D4a7B8281B'; // spender address kovan
+                const contractInstance = getWalletContractInstance(web3, walletAddress);
+                const biconomyAddress = await contractInstance.methods.getBiconomyAddress(accounts[0]).call();
 
-                // // If insufficient allowance, approve else convert KNC to ETH.
-                if (convertInWei() <= contractAllowance) {
-                  await trade(
-                    TokenInfoArray[0][firstToken].token_contract_address,
-                    convertInWei(addQty, TokenInfoArray[0][firstToken].decimals),
-                    TokenInfoArray[0][secondToken].token_contract_address,
-                    REF_ADDRESS,
-                    MAX_ALLOWANCE,
-                    results.slippageRate,
-                    REF_ADDRESS,
-                    firstToken,
-                    secondToken,
-                    addQty,
-                  );
+                if (biconomyAddress === '0x0000000000000000000000000000000000000000' || biconomyAddress === '') {
+                  alert('You are new biconomy user so press ok to register address in instcryp wallet');
                 } else {
-                  await approveContract(MAX_ALLOWANCE,
-                    TokenInfoArray[0][firstToken].token_contract_address);
-                  await trade(
-                    TokenInfoArray[0][firstToken].token_contract_address,
-                    convertInWei(addQty, TokenInfoArray[0][firstToken].decimals),
+
+                  // Calculate slippage rate
+                  const results = await getRates(TokenInfoArray[0][firstToken].token_contract_address,
                     TokenInfoArray[0][secondToken].token_contract_address,
-                    REF_ADDRESS,
-                    MAX_ALLOWANCE,
-                    results.slippageRate,
-                    REF_ADDRESS,
-                    firstToken,
-                    secondToken,
-                    addQty,
-                  );
+                    convertInWei(addQty, TokenInfoArray[0][firstToken].decimals));
+
+                  // Check KyberNetworkProxy contract allowance
+                  const contractAllowance = await getSrcTokenContract(TokenInfoArray[0][firstToken].token_contract_address).methods
+                    .allowance(biconomyAddress, KYBER_NETWORK_PROXY_ADDRESS)
+                    .call();
+
+                    const bal0 = await getSrcTokenContract(TokenInfoArray[0][firstToken].token_contract_address).methods
+                    .balanceOf(biconomyAddress)
+                    .call();
+                    console.log(bal0);
+
+                  // // If insufficient allowance, approve else convert KNC to ETH.
+                  if (convertInWei() <= contractAllowance) {
+                    await trade(
+                      TokenInfoArray[0][firstToken].token_contract_address,
+                      convertInWei(addQty, TokenInfoArray[0][firstToken].decimals),
+                      TokenInfoArray[0][secondToken].token_contract_address,
+                      biconomyAddress,
+                      MAX_ALLOWANCE,
+                      results.slippageRate,
+                      biconomyAddress,
+                      firstToken,
+                      secondToken,
+                      addQty,
+                    );
+                  } else {
+                    await approveContract(MAX_ALLOWANCE,
+                      TokenInfoArray[0][firstToken].token_contract_address, biconomyAddress);
+                    await trade(
+                      TokenInfoArray[0][firstToken].token_contract_address,
+                      convertInWei(addQty, TokenInfoArray[0][firstToken].decimals),
+                      TokenInfoArray[0][secondToken].token_contract_address,
+                      biconomyAddress,
+                      MAX_ALLOWANCE,
+                      results.slippageRate,
+                      biconomyAddress,
+                      firstToken,
+                      secondToken,
+                      addQty,
+                    );
+                  }
+                  toast.success("Transaction Successfull!!", {
+                    position: toast.POSITION.TOP_RIGHT
+                });
+                  console.log('Kyber Transaction Done');
                 }
-                console.log('Done');
+
               } else {
                 alert('Platform can not handle your amount this moment. Please reduce your amount.');
               }
@@ -107,10 +128,6 @@ class KyberContainer extends Component {
     this.setState({ swapLoadding: false });
   }
 
-  handleChangeforFirstToken = (e, { value }) => this.setState({ firstToken: value });
-
-  handleChangeforSecondToken = (e, { value }) => this.setState({ secondToken: value });
-
   convert = async () => {
     const {
       firstToken, secondToken, addQty, convertBtn,
@@ -125,20 +142,25 @@ class KyberContainer extends Component {
           console.log('TokenInfoArray[0][firstToken]======', TokenInfoArray[0][firstToken]);
           console.log('TokenInfoArray[0][secondToken]======', TokenInfoArray[0][secondToken]);
           const results = await getRates(TokenInfoArray[0][firstToken].token_contract_address,
-            TokenInfoArray[0][secondToken].token_contract_address,
-            convertInWei(addQty, TokenInfoArray[0][firstToken].decimals));
+            TokenInfoArray[0][secondToken].token_contract_address, 
+            parseInt(addQty)
+          );
           const decimal = TokenInfoArray[0][secondToken].decimals;
           // alert(new BN(1).times(10 ** decimal));
           // alert(results.expectedRate + " " + results.slippageRate);
-          const expectedrateFromAPi = parseInt(results.expectedRate) / (new BN(1).times(10 ** decimal));
+          // alert(results.expectedRate)
+          // alert(parseInt(results.expectedRate))
+          const expectedrateFromAPi = results.expectedRate / (new BN(1).times(10 ** decimal));
 
           this.setState({
             expectedrate: expectedrateFromAPi,
           });
 
-          // alert(expectedrate*addQty)
+          if(addQty == 0){
+            return
+          }
           if (expectedrateFromAPi * addQty > 0) {
-            // document.getElementById('demo').innerHTML = `${addQty} (${firstToken}) = ${expectedrateFromAPi * addQty} (${secondToken})`;
+          // //   // document.getElementById('demo').innerHTML = `${addQty} (${firstToken}) = ${expectedrateFromAPi * addQty} (${secondToken})`;
             this.setState({
               convertedValue: expectedrateFromAPi * addQty,
               convertBtn: 1,
@@ -147,6 +169,9 @@ class KyberContainer extends Component {
             alert('Platform can not handle your amount this moment. Please reduce your amount.');
           }
         } else {
+          this.setState({
+            convertedValue: 0
+          });
           alert('Please add the add quantity field');
         }
       } else {
@@ -162,6 +187,10 @@ class KyberContainer extends Component {
       if (callback) callback();
     });
   }
+  
+  handleChangeforFirstToken = (e, { value }) => this.setState({ firstToken: value });
+
+  handleChangeforSecondToken = (e, { value }) => this.setState({ secondToken: value });
 
   render() {
     const {
@@ -174,8 +203,8 @@ class KyberContainer extends Component {
         secondToken={secondToken}
         addQty={addQty}
         handleChangeforFirstToken={this.handleChangeforFirstToken}
-        main={this.main}
-        main3={this.main3}
+        kyberTrade={this.kyberTrade}
+        reverseToken={this.reverseToken}
         handleChangeforSecondToken={this.handleChangeforSecondToken}
         convert={this.convert}
         handleState={this.handleState}

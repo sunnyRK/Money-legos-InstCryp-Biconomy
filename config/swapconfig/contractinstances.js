@@ -3,7 +3,7 @@ export function getERCContractInstance(web3, tokenSymbol) {
     abi ='[{"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_spender","type":"address"},{"name":"_value","type":"uint256"}],"name":"approve","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_from","type":"address"},{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transferFrom","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_owner","type":"address"}],"name":"balanceOf","outputs":[{"name":"balance","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transfer","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_owner","type":"address"},{"name":"_spender","type":"address"}],"name":"allowance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"payable":true,"stateMutability":"payable","type":"fallback"},{"anonymous":false,"inputs":[{"indexed":true,"name":"owner","type":"address"},{"indexed":true,"name":"spender","type":"address"},{"indexed":false,"name":"value","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"from","type":"address"},{"indexed":true,"name":"to","type":"address"},{"indexed":false,"name":"value","type":"uint256"}],"name":"Transfer","type":"event"}]';
     const address = TokenInfoArray[0][tokenSymbol].token_contract_address;
     const jsonAbi = JSON.parse(abi);
-    console.log(address);
+    // alert(address);
     const contract = new web3.eth.Contract(jsonAbi, address);    
     return contract;
 }
@@ -61,20 +61,58 @@ export function getUniswapV2Library(web3) {
 //     return contract;
 // }
 
-//Ropsten Network
+export const MAX_ALLOWANCE = "115792089237316195423570985008687907853269984665640564039457584007913129639935";
+
+//Kovan Network
+
 export const TokenInfoArray = [
     {
         'DAI': {
             "token_symbol":"DAI",
-            "token_contract_address":"0xff795577d9ac8bd7d90ee22b6c1703490b6512fd",
+            "token_contract_address":"0x4f96fe3b7a6cf9725f59d353f723c1bdb64ca6aa",
+            "decimals": 18
+        },'WETH': {
+            "token_symbol":"WETH",
+            "token_contract_address":"0xd0A1E359811322d97991E03f863a0C30C2cF029C",
+            "decimals": 18
+        },'BAT': {
+            "token_symbol":"BAT",
+            "token_contract_address":"0x2d12186Fbb9f9a8C28B3FfdD4c42920f8539D738",
             "decimals": 18
         },'KNC': {
             "token_symbol":"KNC",
-            "token_contract_address":"0x3f80c39c0b96a0945f9f0e9f55d8a8891c5671a8",
+            "token_contract_address":"0xad67cB4d63C9da94AcA37fDF2761AaDF780ff4a2",
+            "decimals": 18
+        },'ZIL': {
+            "token_symbol":"ZIL",
+            "token_contract_address":"0xAb74653cac23301066ABa8eba62b9Abd8a8c51d6",
+            "decimals": 18
+        },
+        
+        // Pair addresses
+        'DAI-WETH': {
+            "token_symbol":"pair",
+            "token_contract_address":"0xB10cf58E08b94480fCb81d341A63295eBb2062C2",
             "decimals": 18
         },'DAI-KNC': {
             "token_symbol":"pair",
-            "token_contract_address":"0xaF3375883914c1aaa9E811A73b56787b6C4Ad39c",
+            "token_contract_address":"0x429Fc3C6951C4280626D739E3A0E73593c485F35",
+            "decimals": 18
+        },'DAI-BAT': {
+            "token_symbol":"pair",
+            "token_contract_address":"0xe4A343572d564cA512a547e5CAa04bBeFcE0A880",
+            "decimals": 18
+        },'DAI-ZIL': {
+            "token_symbol":"pair",
+            "token_contract_address":"0xaD8adA5F8e7464a7Ff6FC03EED2d75427C1257C8",
+            "decimals": 18
+        },'WETH-KNC': {
+            "token_symbol":"pair",
+            "token_contract_address":"0xCF138BDB3644CBe5b9112f7AEB4182E0b153063c",
+            "decimals": 18
+        },'WETH-BAT': {
+            "token_symbol":"pair",
+            "token_contract_address":"0xBF5918efF1EBa2201d0d51267D1530D272328137",
             "decimals": 18
         }
     }
@@ -82,31 +120,117 @@ export const TokenInfoArray = [
 
   export const PairInfoArray = [
     {
-        'DAI-KNC': {
-            "pairaddress":"0xaF3375883914c1aaa9E811A73b56787b6C4Ad39c",
+        'DAI-WETH': {
+            "pairaddress":"0xB10cf58E08b94480fCb81d341A63295eBb2062C2",
+            "token0":"DAI",
+            "token1": "WETH"
+        },'DAI-KNC': {
+            "pairaddress":"0x429Fc3C6951C4280626D739E3A0E73593c485F35",
             "token0":"DAI",
             "token1": "KNC"
+        },'DAI-BAT': {
+            "pairaddress":"0xe4A343572d564cA512a547e5CAa04bBeFcE0A880",
+            "token0":"DAI",
+            "token1": "BAT"
+        },'DAI-ZIL': {
+            "pairaddress":"0xaD8adA5F8e7464a7Ff6FC03EED2d75427C1257C8",
+            "token0":"DAI",
+            "token1": "ZIL"
+        },'WETH-KNC': {
+            "pairaddress":"0xCF138BDB3644CBe5b9112f7AEB4182E0b153063c",
+            "token0":"WETH",
+            "token1": "KNC"
+        },'WETH-BAT': {
+            "pairaddress":"0xBF5918efF1EBa2201d0d51267D1530D272328137",
+            "token0":"WETH",
+            "token1": "BAT"
         }
     }
   ];
 
+// export const TokenInfoArray = [
+//     {
+//         'DAI': {
+//             "token_symbol":"DAI",
+//             "token_contract_address":"0xff795577d9ac8bd7d90ee22b6c1703490b6512fd",
+//             "decimals": 18
+//         },'KNC': {
+//             "token_symbol":"KNC",
+//             "token_contract_address":"0x3f80c39c0b96a0945f9f0e9f55d8a8891c5671a8",
+//             "decimals": 18
+//         },'DAI-KNC': {
+//             "token_symbol":"pair",
+//             "token_contract_address":"0xaF3375883914c1aaa9E811A73b56787b6C4Ad39c",
+//             "decimals": 18
+//         }
+//     }
+// ];
+
+//   export const PairInfoArray = [
+//     {
+//         'DAI-KNC': {
+//             "pairaddress":"0xaF3375883914c1aaa9E811A73b56787b6C4Ad39c",
+//             "token0":"DAI",
+//             "token1": "KNC"
+//         }
+//     }
+//   ];
+
   export const tagOptions = [
-    // {
-    //   key: 'WETH-DAI',
-    //   text: 'WETH-DAI',
-    //   value: 'WETH-DAI',
-    //   label: { color: 'red', empty: true, circular: true },
-    // },
     {
-      key: 'DAI-KNC',
+      key: 'DAI-WETH',
       text: (
         <div>
           <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" />
-          DAI - <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" /> KNC
+          DAI - <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" /> WETH
         </div>
       ),
-      value: 'DAI-KNC',
-    //   label: { color: 'blue', empty: true, circular: true },
-    }
+      value: 'DAI-WETH',
+    },{
+        key: 'DAI-KNC',
+        text: (
+          <div>
+            <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" />
+            DAI - <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" /> KNC
+          </div>
+        ),
+        value: 'DAI-KNC',
+      },{
+        key: 'DAI-BAT',
+        text: (
+          <div>
+            <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" />
+            DAI - <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" /> BAT
+          </div>
+        ),
+        value: 'DAI-BAT',
+      },{
+        key: 'DAI-ZIL',
+        text: (
+          <div>
+            <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" />
+            DAI - <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" /> ZIL
+          </div>
+        ),
+        value: 'DAI-ZIL',
+      },{
+        key: 'WETH-KNC',
+        text: (
+          <div>
+            <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" />
+            WETH - <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" /> KNC
+          </div>
+        ),
+        value: 'WETH-KNC',
+      },{
+        key: 'WETH-BAT',
+        text: (
+          <div>
+            <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" />
+            WETH - <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" /> BAT
+          </div>
+        ),
+        value: 'WETH-BAT',
+      }
   ];
   
