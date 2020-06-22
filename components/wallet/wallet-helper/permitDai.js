@@ -1,4 +1,3 @@
-// import Interface from "./interface.json";
 import { getERCContractInstance } from './walletinstance'
 import { ToastContainer, toast } from 'react-toastify';
 

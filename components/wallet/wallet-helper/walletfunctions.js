@@ -10,9 +10,7 @@ export async function approve(web3, contractInstance, spender, value) {
         ).send({
             from:accounts[0]
         }).on("transactionHash", (hash) => {
-            // alert("Transaction hash: " +  hash);
         }).once("confirmation", (confirmationCount, receipt) => {   
-            // alert("Transaction confirmed!")
         }).on("error", (error)=>{
             console.log(error);
         });
@@ -39,9 +37,7 @@ export async function transferFromTokens(web3, walletAddress, tokenSymbol, recip
             toast.success("Transferring DAI using meta-transaction!", {
                 position: toast.POSITION.TOP_RIGHT
             });
-            // alert("Transaction hash: " +  hash);
         }).once("confirmation", (confirmationCount, receipt) => {
-            // alert("Transaction confirmed!")
         }).on("error", (error) => {
             console.log("error");
             console.log(error);
@@ -64,9 +60,7 @@ export async function transferTokens(web3, walletAddress, tokenSymbol, recipient
         ).send({
             from:accounts[0]
         }).on("transactionHash", (hash) => {
-            alert("Transaction hash: " +  hash);
         }).once("confirmation", (confirmationCount, receipt) => {
-            alert("Transaction confirmed!")
         }).on("error", (error) => {
             console.log("error");
             console.log(error);
@@ -85,9 +79,7 @@ export async function biconomyLogin(web3, contractInstance, biconomyAddress) {
         ).send({
             from:accounts[0]
         }).on("transactionHash", (hash) => {
-            alert("Transaction hash: " +  hash);
         }).once("confirmation", (confirmationCount, receipt) => {
-            alert("Transaction confirmed!")
         }).on("error", (error) => {
             console.log("error");
             console.log(error);
@@ -112,9 +104,7 @@ export async function addTransaction(web3, contractInstance, biconomyAddress, to
             from:accounts[0]
         }).on("transactionHash", (hash) => {
             transactionHash = hash
-            alert("Transaction hash: " +  hash);
         }).once("confirmation", (confirmationCount, receipt) => {
-            // alert("Transaction confirmed!")
         }).on("error", (error) => {
             console.log("error");
             console.log(error.message);
@@ -137,10 +127,8 @@ export async function transferErc20(web3, contractInstance, to, value) {
         ).send({
             from:accounts[0]
         }).on("transactionHash", (hash) => {
-            // alert("Transaction hash: " +  hash);
             transactionHash = hash;
         }).once("confirmation", (confirmationCount, receipt) => {   
-            // alert("Transaction confirmed!")
             console.log(receipt.status);
             status = receipt.status
         }).on("error", (error)=>{

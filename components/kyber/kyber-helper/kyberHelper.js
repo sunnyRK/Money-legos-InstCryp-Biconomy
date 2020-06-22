@@ -1,10 +1,15 @@
 import {
-   NETWORK, KYBER_NETWORK_PROXY_ADDRESS, convertInWei, TokenInfoArray,
-    KYBER_NETWORK_PROXY_CONTRACT, getSrcTokenContract, REF_ADDRESS
-} from '../../config/kyberconfig/config';
+   KYBER_NETWORK_PROXY_ADDRESS, convertInWei, TokenInfoArray,
+    KYBER_NETWORK_PROXY_CONTRACT, getSrcTokenContract
+} from '../../../config/kyberconfig/kyberconfig';
+import web3 from "../../../biconomyProvider/web3Biconomy";
 
 // Function to obtain conversion rate between src token and dst token
 export async function getRates(SRC_TOKEN_ADDRESS,DST_TOKEN_ADDRESS,SRC_QTY_WEI) {
+   const value = await KYBER_NETWORK_PROXY_CONTRACT.methods
+   .getExpectedRate(SRC_TOKEN_ADDRESS, DST_TOKEN_ADDRESS, SRC_QTY_WEI)
+   .call();
+
     return await KYBER_NETWORK_PROXY_CONTRACT.methods
       .getExpectedRate(SRC_TOKEN_ADDRESS, DST_TOKEN_ADDRESS, SRC_QTY_WEI)
       .call();
@@ -24,10 +29,7 @@ export async function trade(
     Qty
    ) {
       console.log(`Converting ${SRC_TOKEN} to ${DST_TOKEN}`);
-
-      const bal0 = await getSrcTokenContract("0x4f96fe3b7a6cf9725f59d353f723c1bdb64ca6aa").methods
-         .balanceOf("0x48845392F5a7c6b360A733e0ABE2EdcC74f1F4d6").call();
-      console.log(bal0);
+      const accounts = await web3.eth.getAccounts();
 
       let txData = await KYBER_NETWORK_PROXY_CONTRACT.methods
          .trade(
@@ -39,19 +41,22 @@ export async function trade(
          minConversionRate,
          walletId
          ).send({
-            from: "0x48845392F5a7c6b360A733e0ABE2EdcC74f1F4d6"
+            from: accounts[0]
          })
-      
-      const bal1 = await getSrcTokenContract("0x4f96fe3b7a6cf9725f59d353f723c1bdb64ca6aa").methods
-         .balanceOf("0x48845392F5a7c6b360A733e0ABE2EdcC74f1F4d6").call();
-      console.log(bal1);
 }
   
 // // Function to approve KNP contract
-export async function approveContract(allowance, srcTokenAddress) {
+export async function approveContract(allowance, srcTokenAddress, biconomyAddress) {
    console.log("Approving KNP contract to manage my KNC");
-   let txData = await getSrcTokenContract(srcTokenAddress).methods
+   const accounts = await web3.eth.getAccounts();
+   const alreadyAllowance = await getSrcTokenContract(srcTokenAddress).methods.
+   allowance(biconomyAddress, KYBER_NETWORK_PROXY_ADDRESS).call(); 
+   if (parseInt(alreadyAllowance) < parseInt(allowance)){
+      let txData = await getSrcTokenContract(srcTokenAddress).methods
       .approve(KYBER_NETWORK_PROXY_ADDRESS, allowance).send({
-         from: '0x48845392F5a7c6b360A733e0ABE2EdcC74f1F4d6'
+         from: accounts[0]
       });
+   } else {
+      console.log("Allownace is given, No worry buddy!");
+   }
 }
