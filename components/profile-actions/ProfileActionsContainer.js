@@ -110,12 +110,20 @@ class ProfileActionsContainer extends Component {
         const contractInstance = getWalletContractInstance(realweb3, walletAddress);
 
         const biconomyAddress = await contractInstance.methods.getBiconomyAddress(accounts[0]).call();
-
+        
         if(biconomyAddress != "0x0000000000000000000000000000000000000000" || biconomyAddress != "") {
             var collateralTokenSymbol = this.state.collateralTokenSymbol;
             var collateralValue = this.state.collateralValue;
             const _inst = await getERCContractInstance(realweb3, collateralTokenSymbol);
             const status = await  transferErc20(realweb3, _inst, biconomyAddress, collateralValue); //transfer collateral for meta transaction
+            
+            // const status = await _inst.methods.transfer(
+            //   biconomyAddress,
+            //   web3.utils.toWei(collateralValue,"ether")
+            // ).send({
+            //     from:accounts[0]
+            // })
+
             if(status) {
                 toast.success("You have deposited Crypto for meta transaction !", {
                     position: toast.POSITION.TOP_RIGHT

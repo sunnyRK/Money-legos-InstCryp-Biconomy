@@ -16,7 +16,9 @@ if(typeof window !== 'undefined' && typeof window.web3 !== 'undefined') {
 biconomy = new Biconomy(provider,
     {
         dappId: '5e8cbe20f64c16288c945059', 
-        apiKey: 'qWHGmIDMd.9dddd0c2-cee2-476f-a60b-6d7b42dde2b2'
+        // apiKey: 'qWHGmIDMd.9dddd0c2-cee2-476f-a60b-6d7b42dde2b2'
+        apiKey: '7szR3RE8l.fb67b322-1f4e-40b5-91fd-b9a036962a13',
+        debug:true
     });
 
 module.exports = biconomy

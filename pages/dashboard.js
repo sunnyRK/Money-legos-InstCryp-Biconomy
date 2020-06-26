@@ -61,6 +61,7 @@ class Index extends Component {
       const walletAddress = '0xD16AdDBF04Bd39DC2Cb7F87942F904D4a7B8281B'; // spender address kovan
       const contractInstance = getWalletContractInstance(web3, walletAddress);
       const bAddress = await contractInstance.methods.getBiconomyAddress(accounts[0]).call();
+      // alert(bAddress)
       if (bAddress == '0x0000000000000000000000000000000000000000' || bAddress == '') {
         this.setState({
           metamaskAddress: accounts[0],
@@ -94,7 +95,6 @@ class Index extends Component {
         console.log(response);
         const response2 = await biconomy.login(accounts[0]);
         console.log(response2);
-        alert('Login Successful...');
         responseAddress = response2.userContract;
         const bAddress = await contractInstance.methods.getBiconomyAddress(accounts[0]).call();
         if (bAddress == '0x0000000000000000000000000000000000000000' || bAddress == '') {
@@ -106,6 +106,7 @@ class Index extends Component {
             metamaskAddress: accounts[0],
           });
         } else {
+          console.log("biconomy address: ", bAddress);
           this.setState({
             biconomyAddress: bAddress,
             metamaskAddress: accounts[0],
@@ -115,7 +116,6 @@ class Index extends Component {
         console.log('Successfully logged in...');
         console.log(response.userContract);
         responseAddress = response.userContract;
-        alert('Login Successful...');
 
         const bAddress = await contractInstance.methods.getBiconomyAddress(accounts[0]).call();
         if (bAddress === '0x0000000000000000000000000000000000000000' || bAddress === '') {

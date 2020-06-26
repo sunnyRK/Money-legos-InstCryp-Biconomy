@@ -72,41 +72,48 @@ class KyberContainer extends Component {
                     console.log(bal0);
 
                   // // If insufficient allowance, approve else convert KNC to ETH.
-                  if (convertInWei() <= contractAllowance) {
-                    await trade(
-                      TokenInfoArray[0][firstToken].token_contract_address,
-                      convertInWei(addQty, TokenInfoArray[0][firstToken].decimals),
-                      TokenInfoArray[0][secondToken].token_contract_address,
-                      biconomyAddress,
-                      MAX_ALLOWANCE,
-                      results.slippageRate,
-                      biconomyAddress,
-                      firstToken,
-                      secondToken,
-                      addQty,
-                    );
-                  } else {
-                    await approveContract(MAX_ALLOWANCE,
-                      TokenInfoArray[0][firstToken].token_contract_address, biconomyAddress);
-                    await trade(
-                      TokenInfoArray[0][firstToken].token_contract_address,
-                      convertInWei(addQty, TokenInfoArray[0][firstToken].decimals),
-                      TokenInfoArray[0][secondToken].token_contract_address,
-                      biconomyAddress,
-                      MAX_ALLOWANCE,
-                      results.slippageRate,
-                      biconomyAddress,
-                      firstToken,
-                      secondToken,
-                      addQty,
-                    );
-                  }
+
+                  if(bal0 > convertInWei(addQty, TokenInfoArray[0][firstToken].decimals)) {
+                    if (convertInWei() <= contractAllowance) {
+                      await trade(
+                        TokenInfoArray[0][firstToken].token_contract_address,
+                        convertInWei(addQty, TokenInfoArray[0][firstToken].decimals),
+                        TokenInfoArray[0][secondToken].token_contract_address,
+                        biconomyAddress,
+                        MAX_ALLOWANCE,
+                        results.slippageRate,
+                        biconomyAddress,
+                        firstToken,
+                        secondToken,
+                        addQty,
+                      );
+                    } else {
+                      await approveContract(MAX_ALLOWANCE,
+                        TokenInfoArray[0][firstToken].token_contract_address, biconomyAddress);
+                      await trade(
+                        TokenInfoArray[0][firstToken].token_contract_address,
+                        convertInWei(addQty, TokenInfoArray[0][firstToken].decimals),
+                        TokenInfoArray[0][secondToken].token_contract_address,
+                        biconomyAddress,
+                        MAX_ALLOWANCE,
+                        results.slippageRate,
+                        biconomyAddress,
+                        firstToken,
+                        secondToken,
+                        addQty,
+                      );
+                    }
+                    
                   toast.success("Transaction Successfull!!", {
                     position: toast.POSITION.TOP_RIGHT
-                });
+                  });
                   console.log('Kyber Transaction Done');
+                } else{
+                  toast.error("Insufficient " + firstToken + " balance!!", {
+                    position: toast.POSITION.TOP_RIGHT
+                  });
+                } 
                 }
-
               } else {
                 alert('Platform can not handle your amount this moment. Please reduce your amount.');
               }
@@ -146,10 +153,6 @@ class KyberContainer extends Component {
             parseInt(addQty)
           );
           const decimal = TokenInfoArray[0][secondToken].decimals;
-          // alert(new BN(1).times(10 ** decimal));
-          // alert(results.expectedRate + " " + results.slippageRate);
-          // alert(results.expectedRate)
-          // alert(parseInt(results.expectedRate))
           const expectedrateFromAPi = results.expectedRate / (new BN(1).times(10 ** decimal));
 
           this.setState({
@@ -160,7 +163,6 @@ class KyberContainer extends Component {
             return
           }
           if (expectedrateFromAPi * addQty > 0) {
-          // //   // document.getElementById('demo').innerHTML = `${addQty} (${firstToken}) = ${expectedrateFromAPi * addQty} (${secondToken})`;
             this.setState({
               convertedValue: expectedrateFromAPi * addQty,
               convertBtn: 1,

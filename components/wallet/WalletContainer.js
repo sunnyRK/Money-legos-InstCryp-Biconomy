@@ -7,6 +7,7 @@ import web3 from '../../biconomyProvider/web3Biconomy';
 import { Router } from '../../routes';
 import biconomy from '../../biconomyProvider/biconomy';
 import permitDai from './wallet-helper/permitDai';
+// import approveToken from './wallet-helper/approveToken';
 
 import {
   transferErc20,

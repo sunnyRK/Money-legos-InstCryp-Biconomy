@@ -12,6 +12,8 @@ import {
   getUniswapV2Factory,
   tagOptions,
 } from '../../../config/swapconfig/contractinstances';
+import { getWalletContractInstance } from '../../wallet/wallet-helper/walletinstance';
+import approveToken from "./approveToken";
 
 class LiquidityContainer extends Component {
   constructor(props) {
@@ -61,8 +63,13 @@ class LiquidityContainer extends Component {
       // console.log(pair);
       if (this.state.removeTokenPair != '') {
         const accounts = await web3.eth.getAccounts();
+        
+        const walletAddress = '0xD16AdDBF04Bd39DC2Cb7F87942F904D4a7B8281B'; // spender address kovan
+        const contractInstance = getWalletContractInstance(web3, walletAddress);
+        const biconomyAddress = await contractInstance.methods.getBiconomyAddress(accounts[0]).call();
+  
         const erc20ContractInstance1 = await getERCContractInstance(web3, this.state.removeTokenPair);
-        const poolTokenBalance = await erc20ContractInstance1.methods.balanceOf("0x6fC3D06462A5518EA370D0E4Bd1525649CE0fC6c").call();
+        const poolTokenBalance = await erc20ContractInstance1.methods.balanceOf(biconomyAddress).call();
         this.setState({
           removeLiquidityTokenAmount: poolTokenBalance,
         });
@@ -82,9 +89,14 @@ class LiquidityContainer extends Component {
       this.setState({ removeLiquidityLoading: true });
       const accounts = await web3.eth.getAccounts();
       const erc20ContractInstance1 = await getERCContractInstance(web3Biconomy, this.state.removeTokenPair);
-      const poolTokenBalance = await erc20ContractInstance1.methods.balanceOf('0x6fC3D06462A5518EA370D0E4Bd1525649CE0fC6c').call();
+
+      const walletAddress = '0xD16AdDBF04Bd39DC2Cb7F87942F904D4a7B8281B'; // spender address kovan
+      const contractInstance = getWalletContractInstance(web3, walletAddress);
+      const biconomyAddress = await contractInstance.methods.getBiconomyAddress(accounts[0]).call();
+
+      const poolTokenBalance = await erc20ContractInstance1.methods.balanceOf(biconomyAddress).call();
       if (parseInt(poolTokenBalance) >= parseInt(this.state.removeLiquidityTokenAmount)) {
-        const allowancePair = await erc20ContractInstance1.methods.allowance('0x6fC3D06462A5518EA370D0E4Bd1525649CE0fC6c', this.state.routeraddress).call();
+        const allowancePair = await erc20ContractInstance1.methods.allowance(biconomyAddress, this.state.routeraddress).call();
 
         if (parseInt(allowancePair) < parseInt(this.state.removeLiquidityTokenAmount)) {
           await erc20ContractInstance1.methods.approve(
@@ -140,27 +152,35 @@ class LiquidityContainer extends Component {
       const accounts = await web3.eth.getAccounts();
       const erc20ContractInstance1 = await getERCContractInstance(web3Biconomy, this.state.liquidityToken0);
       const erc20ContractInstance2 = await getERCContractInstance(web3Biconomy, this.state.liquidityToken1);
-      const balance0 = await erc20ContractInstance1.methods.balanceOf('0x6fC3D06462A5518EA370D0E4Bd1525649CE0fC6c').call();
-      const balance1 = await erc20ContractInstance2.methods.balanceOf('0x6fC3D06462A5518EA370D0E4Bd1525649CE0fC6c').call();
+
+      
+      const walletAddress = '0xD16AdDBF04Bd39DC2Cb7F87942F904D4a7B8281B'; // spender address kovan
+      const contractInstance = getWalletContractInstance(web3, walletAddress);
+      const biconomyAddress = await contractInstance.methods.getBiconomyAddress(accounts[0]).call();
+
+
+      const balance0 = await erc20ContractInstance1.methods.balanceOf(biconomyAddress).call();
+      const balance1 = await erc20ContractInstance2.methods.balanceOf(biconomyAddress).call();
 
       if (parseInt(balance0) >= parseInt(this.state.addLiquidityamount0) && parseInt(this.state.addLiquidityamount0) > parseInt(this.state.minValue)) {
         if (parseInt(balance1) >= parseInt(this.state.addLiquidityamount1) && parseInt(this.state.addLiquidityamount1) > parseInt(this.state.minValue)) {
-          const allowanceToken0 = await erc20ContractInstance1.methods.allowance('0x6fC3D06462A5518EA370D0E4Bd1525649CE0fC6c', this.state.routeraddress).call();
-          const allowanceToken1 = await erc20ContractInstance2.methods.allowance('0x6fC3D06462A5518EA370D0E4Bd1525649CE0fC6c', this.state.routeraddress).call();
+          const allowanceToken0 = await erc20ContractInstance1.methods.allowance(biconomyAddress, this.state.routeraddress).call();
+          const allowanceToken1 = await erc20ContractInstance2.methods.allowance(biconomyAddress, this.state.routeraddress).call();
           if (parseInt(allowanceToken0) < parseInt(this.state.addLiquidityamount0)) {
             await erc20ContractInstance1.methods.approve(
               this.state.routeraddress,
-              parseInt(this.state.addLiquidityamount0),
+              web3Biconomy.utils.toWei(this.state.addLiquidityamount0)
             ).send({
               from: accounts[0],
             });
+            // await approveToken(web3Biconomy, accounts[0], "0x2d12186Fbb9f9a8C28B3FfdD4c42920f8539D738", "BAT");
           }
 
           if (parseInt(allowanceToken1) < parseInt(this.state.addLiquidityamount1)) {
             await erc20ContractInstance2.methods.approve(
-              this.state.routeraddress,
-              this.state.addLiquidityamount1,
-            ).send({
+                this.state.routeraddress, 
+                web3Biconomy.utils.toWei(this.state.addLiquidityamount1)
+              ).send({
               from: accounts[0],
             });
           }
@@ -168,8 +188,10 @@ class LiquidityContainer extends Component {
           const transactionHash = await routeContractInstance.methods.addLiquidity(
             TokenInfoArray[0][this.state.liquidityToken0].token_contract_address,
             TokenInfoArray[0][this.state.liquidityToken1].token_contract_address,
-            this.state.addLiquidityamount0,
-            this.state.addLiquidityamount1,
+            web3Biconomy.utils.toWei(this.state.addLiquidityamount0),
+            web3Biconomy.utils.toWei(this.state.addLiquidityamount1),
+            // this.state.addLiquidityamount0,
+            // this.state.addLiquidityamount1,
             this.state.minValue,
             this.state.minValue,
             accounts[0],

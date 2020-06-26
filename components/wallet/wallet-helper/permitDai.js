@@ -46,7 +46,7 @@ export default async (web3, signer, CONTRACT_ADDRESS, recipientAddress, value, c
     spender: CONTRACT_ADDRESS,
     nonce: nonce,
     expiry: 0,
-    allowed: true
+    allowed: true,
   };
 
   let typedData = JSON.stringify({
