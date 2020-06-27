@@ -99,7 +99,7 @@ const Liquidity = ({
             }}
           />
         </div>
-        <div className="button">
+        <div className="button set-max-btn">
           <Button
             bsStyle="primary"
             basic

@@ -20,13 +20,15 @@ $left-content-width: 100px;
       transform: translate3d($left-content-width, 0, 0) !important;
       padding: 20px;
       display: flex;
+      @media screen and (max-width: 880px) {
+        flex-direction: column;
+      }
       .content-wrapper {
         width: 70%;
+        @media screen and (max-width: 880px) {
+          width: 100%;
+        }
       }
-      // .basic {
-      //   height: 100%;
-      //   background-color: #f9fbfd; 
-      // }
     }
   }
 }

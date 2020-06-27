@@ -180,54 +180,54 @@ export const TokenInfoArray = [
     {
       key: 'DAI-WETH',
       text: (
-        <div>
-          <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" />
-          DAI - <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" /> WETH
+        <div className="token-pairs-overlap">
+          <img src="/static/dai.svg" className="ui avatar image" alt="coin" />
+          <img src="/static/eth.svg" className="ui avatar image overlap-image" alt="coin" /> DAI - WETH
         </div>
       ),
       value: 'DAI-WETH',
     },{
         key: 'DAI-KNC',
         text: (
-          <div>
-            <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" />
-            DAI - <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" /> KNC
+          <div className="token-pairs-overlap">
+            <img src="/static/dai.svg" className="ui avatar image" alt="coin" />
+            <img src="/static/knc.svg" className="ui avatar image overlap-image" alt="coin" /> DAI - KNC
           </div>
         ),
         value: 'DAI-KNC',
       },{
         key: 'DAI-BAT',
         text: (
-          <div>
-            <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" />
-            DAI - <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" /> BAT
+          <div className="token-pairs-overlap">
+            <img src="/static/dai.svg" className="ui avatar image" alt="coin" />
+            <img src="/static/bat.svg" className="ui avatar image overlap-image" alt="coin" /> DAI - BAT
           </div>
         ),
         value: 'DAI-BAT',
       },{
         key: 'DAI-ZIL',
         text: (
-          <div>
-            <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" />
-            DAI - <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" /> ZIL
+          <div className="token-pairs-overlap">
+            <img src="/static/dai.svg" className="ui avatar image" alt="coin" />
+            <img src="/static/zil.png" className="ui avatar image overlap-image" alt="coin" /> DAI - ZIL
           </div>
         ),
         value: 'DAI-ZIL',
       },{
         key: 'WETH-KNC',
         text: (
-          <div>
-            <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" />
-            WETH - <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" /> KNC
+          <div className="token-pairs-overlap">
+            <img src="/static/eth.svg" className="ui avatar image" alt="coin" />
+            <img src="/static/knc.svg" className="ui avatar image overlap-image" alt="coin" /> WETH - KNC
           </div>
         ),
         value: 'WETH-KNC',
       },{
         key: 'WETH-BAT',
         text: (
-          <div>
-            <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" />
-            WETH - <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" /> BAT
+          <div className="token-pairs-overlap">
+            <img src="/static/eth.svg" className="ui avatar image" alt="coin" />
+            <img src="/static/bat.svg" className="ui avatar image overlap-image" alt="coin" /> WETH - BAT
           </div>
         ),
         value: 'WETH-BAT',

@@ -22,3 +22,14 @@ body {
     height: 45px;
   }
 }
+
+.token-pairs-overlap {
+  img {
+    &:hover {
+      z-index: 1;
+    }
+  }
+  .overlap-image {
+    margin-left: -10px;
+  }
+}
