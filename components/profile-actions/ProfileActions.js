@@ -6,7 +6,7 @@ const options = [
     key: 'dai',
     text: (
       <div>
-        <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" />
+        <img src="/static/dai.svg" className="ui avatar image" alt="coin" />
         DAI
       </div>
     ),
@@ -16,7 +16,7 @@ const options = [
     key: 'weth',
     text: (
       <div>
-        <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" />
+        <img src="/static/eth.svg" className="ui avatar image" alt="coin" />
         WETH
       </div>
     ),
@@ -26,7 +26,7 @@ const options = [
     key: 'bat',
     text: (
       <div>
-        <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" />
+        <img src="/static/bat.svg" className="ui avatar image" alt="coin" />
         BAT
       </div>
     ),
@@ -35,7 +35,7 @@ const options = [
     key: 'knc',
     text: (
       <div>
-        <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" />
+        <img src="/static/knc.svg" className="ui avatar image" alt="coin" />
         KNC
       </div>
     ),
@@ -45,7 +45,7 @@ const options = [
     key: 'zil',
     text: (
       <div>
-        <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" />
+        <img src="/static/zil.png" className="ui avatar image" alt="coin" />
         ZIL
       </div>
     ),
@@ -55,7 +55,7 @@ const options = [
     key: 'tkn',
     text: (
       <div>
-        <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" />
+        <img src="/static/sai.svg" className="ui avatar image" alt="coin" />
         TKN
       </div>
     ),

@@ -13,6 +13,7 @@
         font-weight: 600;
         line-height: 1.6rem;
         color: dodgerblue;
+        word-break: break-all;
       }
     }
     .check-balance-button {
@@ -24,6 +25,17 @@
     .transfer-content {
       display: flex;
       align-items: center;
+      @media screen and (max-width: 800px) {
+        flex-direction: column;
+        .from-content, .to-content, .middle-content {
+          width: 100% !important;
+          .input {
+            input {
+              width: calc(100% - 120px) !important;
+            }
+          }
+        }
+      }
       .from-content, .to-content {
         width: calc(50% - 20px);
         .input {
@@ -33,7 +45,7 @@
           border: 1px solid transparent;
           margin-bottom: 10px;
           .from-token {
-            width: 105px;
+            width: 120px;
           }
         }
       }
@@ -41,6 +53,10 @@
         width: 80px;
         align-self: flex-end;
         height: 50px;
+        @media (max-width: 800px) {
+          transform: rotate(90deg);
+          align-self: center;
+        }
         .transfer_arrow {
           display: block;
           margin: 5px auto 0;

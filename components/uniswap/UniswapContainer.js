@@ -44,8 +44,42 @@ const BN = require('bignumber.js');
 //   verifyingContract: Tokenaddress
 // };
 
-class UniswapContainer extends Component {
+const Tokens = [
+  {
+    value: 'DAI',
+    image: '/static/dai.svg',
+  },
+  {
+    value: 'TRB',
+    image: '/static/trb.png',
+  },
+  {
+    value: 'BAT',
+    image: '/static/bat.svg',
+  },
+  {
+    value: 'ZRX',
+    image: '/static/zrx.svg',
+  },
+  {
+    value: 'WETH',
+    image: '/static/eth.svg',
+  },
+  {
+    value: 'KNC',
+    image: '/static/knc.svg',
+  },
+  {
+    value: 'ZIL',
+    image: '/static/zil.png',
+  },
+  {
+    value: 'TKN',
+    image: '/static/sai.svg',
+  },
+];
 
+class UniswapContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -174,24 +208,34 @@ class UniswapContainer extends Component {
       {
         key: PairInfoArray[0][value].token0,
         text: (
-          <div>
-            <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" />
+          <div className="align-items">
+            <img
+              src={
+              Tokens.find((token) => token.value === PairInfoArray[0][value].token0).image
+              }
+              className="ui avatar image"
+              alt="coin"
+            />
             {PairInfoArray[0][value].token0}
           </div>
         ),
         value: PairInfoArray[0][value].token0,
-        // label: { color: 'red', empty: true, circular: true },
       },
       {
         key: PairInfoArray[0][value].token1,
         text: (
-          <div>
-            <img src="https://cdn4.iconfinder.com/data/icons/crypto-currency-and-coin-2/256/etherium_eth_ethcoin_crypto-512.png" className="ui avatar image" alt="coin" />
+          <div className="align-items">
+            <img
+              src={
+              Tokens.find((token) => token.value === PairInfoArray[0][value].token1).image
+              }
+              className="ui avatar image"
+              alt="coin"
+            />
             {PairInfoArray[0][value].token1}
           </div>
         ),
         value: PairInfoArray[0][value].token1,
-        // label: { color: 'blue', empty: true, circular: true },
       },
     ];
 
