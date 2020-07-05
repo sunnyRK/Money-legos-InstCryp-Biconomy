@@ -27,7 +27,7 @@
 ### Tech-Stack
   Ethereum | Solidity | Web3.JS | Biconomy-Mexa SDK | Next.JS || Uniswap-V2 || Uniswap-V2-Oracles || Kyber protocol 
 
-### COntacts
+### Contacts
 
 `radadiyasunny970@gmail.com`  
 `Twitter:` [RadadiyaSunny](https://twitter.com/RadadiyaSunny)
