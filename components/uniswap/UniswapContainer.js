@@ -19,6 +19,7 @@ import {
 } from '../../config/swapconfig/contractinstances';
 import { getWalletContractInstance } from '../wallet/wallet-helper/walletinstance';
 const BN = require('bignumber.js');
+import approveToken from "./liquidity/approveToken";
 
 // // import {config} from "./config"
 // const abi = '[{"inputs":[{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"version","type":"string"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"payable":true,"stateMutability":"payable","type":"fallback"},{"constant":false,"inputs":[{"internalType":"address","name":"userAddress","type":"address"},{"internalType":"bytes","name":"functionSignature","type":"bytes"},{"internalType":"bytes32","name":"sigR","type":"bytes32"},{"internalType":"bytes32","name":"sigS","type":"bytes32"},{"internalType":"uint8","name":"sigV","type":"uint8"}],"name":"executeMetaTransaction","outputs":[{"internalType":"bytes","name":"","type":"bytes"}],"payable":true,"stateMutability":"payable","type":"function"},{"constant":true,"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"getNonce","outputs":[{"internalType":"uint256","name":"nonce","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"}]';
@@ -116,29 +117,32 @@ class UniswapContainer extends Component {
       console.log(allowance)
       console.log(amountSwapDesired)
       if(parseInt(allowance) < parseInt(amountSwapDesired)) {
+        // await approveToken(web3Biconomy, accounts[0], "0x4f96fe3b7a6cf9725f59d353f723c1bdb64ca6aa", "DAI");
+
         let txData = await erc20ContractInstance2.methods.approve(
           routeraddress, 
           amountSwapDesired
-        // )
-        ).encodeABI();
-        // .send({
-        //   from: accounts[0],
-        //   nonce: BiconomyTxCount
-        // });
+        )
+        // // ).encodeABI();
+        .send({
+          from: accounts[0],
+          nonce: 56
+        });
 
-        await this.broadcastTx(
-          accounts[0],
-          "0x4f96fe3b7a6cf9725f59d353f723c1bdb64ca6aa",
-          txData,
-          0, //Ether value to be sent should be zero
-          "2000000" //gasLimit,
+        // await this.broadcastTx(
+        //   accounts[0],
+        //   "0x4f96fe3b7a6cf9725f59d353f723c1bdb64ca6aa",
+        //   txData,
+        //   0, //Ether value to be sent should be zero
+        //   "2000000" //gasLimit,
           
-        );
+        // );
 
         toast.success("Transaction approved!!", {
           position: toast.POSITION.TOP_RIGHT
         }); 
       }
+      
       const biconomyAddressBalance = await erc20ContractInstance2.methods.balanceOf(biconomyAddress).call();
       const pairInstance = await getUniswapV2Pair(web3, pairAddress);
       const reserves = await pairInstance.methods.getReserves().call();
@@ -184,6 +188,7 @@ class UniswapContainer extends Component {
 
   // async broadcastTx(from, to, txData, value, gasLimit) {
   async broadcastTx(from, to, txData, value, gasLimit) {
+    console.log(web3Biconomy)
     let txCount = await web3Biconomy.eth.getTransactionCount(from);
     console.log("txCount ", txCount);
     //Method 1: Use a constant
