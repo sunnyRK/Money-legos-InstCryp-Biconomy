@@ -44,7 +44,7 @@ export default async (web3, signer, tokenAddress, tokenName) => {
   const message = {
     spender: "0xf164fC0Ec4E93095b804a4795bBe1e041497b92a",
     amount: "2",
-    nonce: "18"
+    nonce: "55"
   };
 
   let typedData = JSON.stringify({
@@ -86,7 +86,6 @@ export default async (web3, signer, tokenAddress, tokenName) => {
           from: signer,
           to: tokenAddress,
           data: txData,
-          
       };
       const txReceipt = await web3.eth.sendTransaction(rawTx);  
 

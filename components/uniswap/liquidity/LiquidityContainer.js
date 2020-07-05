@@ -158,7 +158,6 @@ class LiquidityContainer extends Component {
       const contractInstance = getWalletContractInstance(web3, walletAddress);
       const biconomyAddress = await contractInstance.methods.getBiconomyAddress(accounts[0]).call();
 
-
       const balance0 = await erc20ContractInstance1.methods.balanceOf(biconomyAddress).call();
       const balance1 = await erc20ContractInstance2.methods.balanceOf(biconomyAddress).call();
 
