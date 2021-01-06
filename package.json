@@ -5,7 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "@biconomy/mexa": "^1.5.3",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "bignumber.js": "^9.0.0",
     "css-loader": "^3.5.3",
     "eth-sig-util": "^2.5.3",
